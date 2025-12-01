@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte | GestionArte</title>
+    <meta name="description" content="Envía tu solicitud de soporte técnico o modificación. Estamos aquí para ayudarte.">
+    
+    <!-- Cargar config.js -->
+    <script src="config.js"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+    
+    <!-- reCAPTCHA (carga explícita) -->
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+    
+    <style>
+        :root {
+            --primary: #1D4E4F;
+            --secondary: #2D8B7A;
+            --tertiary: #5FB09C;
+            --gradient-main: linear-gradient(135deg, #1D4E4F 0%, #2D8B7A 50%, #5FB09C 100%);
+            --gradient-hero: linear-gradient(160deg, #1D4E4F 0%, #2D8B7A 100%);
+            --gradient-accent: linear-gradient(135deg, #2D8B7A 0%, #5FB09C 100%);
+            --dark: #0F2627;
+            --light: #F0F7F6;
+            --surface: #FFFFFF;
+            --surface-alt: #E8F3F1;
+            --text: #2C3E3E;
+            --text-light: #5A6B6B;
+            --text-muted: #8A9A9A;
+            --gold: #D4A853;
+            --gold-light: #F5E6C8;
+            --success: #28a745;
+            --success-light: #d4edda;
+            --error: #dc3545;
+            --error-light: #f8d7da;
+            --shadow-sm: 0 1px 3px rgba(29, 78, 79, 0.08);
+            --shadow-md: 0 4px 12px rgba(29, 78, 79, 0.12);
+            --shadow-lg: 0 8px 30px rgba(29, 78, 79, 0.15);
+            --shadow-xl: 0 20px 50px rgba(29, 78, 79, 0.2);
+            --shadow-glow: 0 0 40px rgba(45, 139, 122, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            background: var(--light);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Fraunces', Georgia, serif;
+            color: var(--primary);
+            line-height: 1.2;
+            font-weight: 700;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        /* ===== NAVIGATION ===== */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-md);
+        }
+        .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .nav-logo-icon {
+            width: 44px; height: 44px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-md);
+        }
+        .nav-logo-icon svg { width: 26px; height: 26px; fill: white; }
+        .nav-logo-text {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem; font-weight: 700;
+            color: var(--primary);
+        }
+        .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500; font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-links a:hover { color: var(--secondary); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: var(--tertiary);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta {
+            background: var(--gradient-accent);
+            color: white !important;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600 !important;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease !important;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .nav-cta::after { display: none !important; }
+        .nav-mobile-toggle {
+            display: none; flex-direction: column; gap: 5px;
+            cursor: pointer; padding: 10px;
+        }
+        .nav-mobile-toggle span {
+            width: 25px; height: 2px; background: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            background: var(--gradient-hero);
+            padding: 8rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(95, 176, 156, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(45, 139, 122, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .page-header-pattern {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+        .page-header-content {
+            position: relative; z-index: 1;
+            text-align: center;
+        }
+        .page-header-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+            margin-bottom: 1.5rem;
+        }
+        .page-header-badge svg {
+            width: 18px; height: 18px; fill: var(--tertiary);
+        }
+        .page-header-badge span { color: rgba(255, 255, 255, 0.9); font-size: 0.85rem; font-weight: 500; }
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: white;
+            margin-bottom: 1rem;
+        }
+        .page-header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            padding: 4rem 0;
+        }
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ===== INFO BOX ===== */
+        .info-box {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .info-box svg {
+            width: 24px; height: 24px;
+            fill: var(--secondary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .info-box-content p {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* ===== FORM CARD ===== */
+        .form-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+        .form-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-card .subtitle {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        .form-group label svg {
+            width: 18px; height: 18px;
+            fill: var(--secondary);
+        }
+        .form-group label .required {
+            color: var(--error);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1.25rem;
+            border: 2px solid var(--surface-alt);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--light);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: var(--surface);
+            box-shadow: 0 0 0 4px rgba(45, 139, 122, 0.1);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+        .form-group textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%235A6B6B'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+        }
+        .form-group .hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* ===== FILE INPUT ===== */
+        .file-input-wrapper {
+            position: relative;
+        }
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .file-input-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 2rem;
+            border: 2px dashed var(--surface-alt);
+            border-radius: 12px;
+            background: var(--light);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-input-label:hover {
+            border-color: var(--secondary);
+            background: var(--surface-alt);
+        }
+        .file-input-label svg {
+            width: 40px; height: 40px;
+            fill: var(--text-muted);
+            transition: fill 0.3s ease;
+        }
+        .file-input-label:hover svg {
+            fill: var(--secondary);
+        }
+        .file-input-label.has-file {
+            border-color: var(--success);
+            background: var(--success-light);
+            color: var(--success);
+        }
+        .file-input-label.has-file svg {
+            fill: var(--success);
+        }
+
+        /* ===== IMAGE PREVIEW ===== */
+        .image-preview {
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+        .image-preview.show {
+            display: block;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            border: 2px solid var(--surface-alt);
+            box-shadow: var(--shadow-md);
+        }
+        .image-preview .remove-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .image-preview .remove-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        .image-preview .remove-btn svg {
+            width: 16px; height: 16px;
+            fill: white;
+        }
+
+        /* ===== RECAPTCHA ===== */
+        .recaptcha-container {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ===== SUBMIT BUTTON ===== */
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 1.1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-submit svg {
+            width: 20px; height: 20px;
+            fill: white;
+        }
+
+        /* ===== MESSAGES ===== */
+        .message {
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-size: 0.95rem;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .message.show {
+            display: flex;
+        }
+        .message svg {
+            width: 24px; height: 24px;
+            flex-shrink: 0;
+        }
+        .message.error {
+            background: var(--error-light);
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .message.error svg { fill: var(--error); }
+        .message.success {
+            background: var(--success-light);
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .message.success svg { fill: var(--success); }
+        .message.info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .message.info svg { fill: #17a2b8; }
+
+        /* ===== SPINNER ===== */
+        .spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .spinner.show {
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--dark);
+            padding: 4rem 0 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem; margin-bottom: 3rem;
+        }
+        .footer-brand { max-width: 280px; }
+        .footer-logo { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+        .footer-logo-icon {
+            width: 40px; height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .footer-logo-icon svg { width: 22px; height: 22px; fill: white; }
+        .footer-logo-text {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem; font-weight: 700; color: white;
+        }
+        .footer-brand p { font-size: 0.9rem; line-height: 1.7; }
+        .footer-column h4 {
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem; font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        .footer-column ul { list-style: none; }
+        .footer-column li { margin-bottom: 0.75rem; }
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none; font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        .footer-column a:hover { color: var(--tertiary); }
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .footer-bottom p { font-size: 0.85rem; }
+        .footer-social { display: flex; gap: 1rem; }
+        .footer-social a {
+            width: 40px; height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .footer-social a:hover { background: var(--secondary); transform: translateY(-3px); }
+        .footer-social svg { width: 18px; height: 18px; fill: white; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-mobile-toggle { display: flex; }
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-brand { max-width: 100%; }
+            .footer-logo { justify-content: center; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+            .form-card { padding: 1.75rem; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 0 1.25rem; }
+            .page-header h1 { font-size: 1.75rem; }
+            .form-card { padding: 1.5rem; }
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 0.8rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">
+            <div class="nav-logo-icon">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+            </div>
+            <span class="nav-logo-text">GestionArte</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#problemas">El Problema</a></li>
+            <li><a href="index.html#modulos">Módulos</a></li>
+            <li><a href="index.html#beneficios">Beneficios</a></li>
+            <li><a href="index.html#tecnologia">Tecnología</a></li>
+            <li><a href="demo.html" class="nav-cta">Acceso a Demo</a></li>
+        </ul>
+        <div class="nav-mobile-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="page-header-pattern"></div>
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-header-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+                    <span>Estamos aquí para ayudarte</span>
+                </div>
+                <h1>Centro de Soporte</h1>
+                <p>Envía tu solicitud de soporte técnico o modificación y nos pondremos en contacto contigo pronto</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="form-container">
+
+                <!-- Info Box -->
+                <div class="info-box">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <div class="info-box-content">
+                        <p>Necesitará su <strong>llave de cliente</strong> para enviar solicitudes. Si no la tiene, contacte a su administrador.</p>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="form-card">
+                    <h2>Nueva Solicitud</h2>
+                    <p class="subtitle">Complete el formulario con los detalles de su solicitud</p>
+                    
+                    <!-- Mensajes de estado -->
+                    <div id="message" class="message">
+                        <svg viewBox="0 0 24 24" class="msg-icon"></svg>
+                        <span class="msg-text"></span>
+                    </div>
+                    
+                    <form id="supportForm" novalidate>
+                        <!-- Llave del cliente -->
+                        <div class="form-group">
+                            <label for="apiKey">
+                                <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                                Llave de Cliente <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="apiKey" 
+                                name="apiKey" 
+                                placeholder="Ingrese su llave de cliente"
+                                required
+                            >
+                        </div>
+                        
+                        <!-- Tipo de solicitud -->
+                        <div class="form-group">
+                            <label for="requestType">
+                                <svg viewBox="0 0 24 24"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/></svg>
+                                Tipo de Solicitud <span class="required">*</span>
+                            </label>
+                            <select id="requestType" name="requestType" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="soporte">🔧 Soporte Técnico</option>
+                                <option value="modificacion">✨ Solicitud de Modificación</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Descripción -->
+                        <div class="form-group">
+                            <label for="description">
+                                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                                Descripción <span class="required">*</span>
+                            </label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                placeholder="Describa detalladamente su solicitud o problema..."
+                                required
+                            ></textarea>
+                            <p class="hint">Sea lo más específico posible para agilizar la atención (mínimo 20 caracteres)</p>
+                        </div>
+                        
+                        <!-- Captura de pantalla -->
+                        <div class="form-group">
+                            <label>
+                                <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                                Captura de Pantalla <span style="color: var(--text-muted); font-weight: normal;">(opcional)</span>
+                            </label>
+                            <div class="file-input-wrapper">
+                                <input 
+                                    type="file" 
+                                    id="screenshot" 
+                                    name="screenshot" 
+                                    accept="image/*"
+                                >
+                                <div class="file-input-label" id="fileLabel">
+                                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                                    <span>Haga clic, arrastre o pegue (Ctrl+V) una imagen</span>
+                                </div>
+                            </div>
+                            <div class="image-preview" id="imagePreview">
+                                <img id="previewImg" src="" alt="Preview">
+                                <button type="button" class="remove-btn" id="removeImage">
+                                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                                    Eliminar imagen
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- reCAPTCHA -->
+                        <div class="recaptcha-container">
+                            <div class="g-recaptcha" data-sitekey="SITE_KEY_PLACEHOLDER" id="recaptcha"></div>
+                        </div>
+                        
+                        <!-- Botón enviar -->
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <span class="spinner" id="spinner"></span>
+                            <svg viewBox="0 0 24 24" id="btnIcon"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                            <span id="btnText">Enviar Solicitud</span>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="footer-logo-icon">
+                            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                        </div>
+                        <span class="footer-logo-text" id="footer-name">GestionArte</span>
+                    </div>
+                    <p>La solución completa para la administración moderna de organizaciones. Integración, automatización y datos para la excelencia.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Producto</h4>
+                    <ul>
+                        <li><a href="index.html#modulos">Módulos</a></li>
+                        <li><a href="index.html#beneficios">Beneficios</a></li>
+                        <li><a href="index.html#tecnologia">Tecnología</a></li>
+                        <li><a href="#">Precios</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Recursos</h4>
+                    <ul>
+                        <li><a href="#">Centro de Ayuda</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Webinars</a></li>
+                        <li><a href="demo.html">Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Empresa</h4>
+                    <ul>
+                        <li><a href="#">Sobre Nosotros</a></li>
+                        <li><a href="soporte.html">Soporte</a></li>
+                        <li><a href="#">Términos de Uso</a></li>
+                        <li><a href="#">Privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 GestionArte. Todos los derechos reservados.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Twitter">
+                        <svg viewBox="0 0 24 24"><path d="M22.46 6c-.85.38-1.78.64-2.75.76 1-.6 1.76-1.55 2.12-2.68-.93.55-1.96.95-3.06 1.17-.88-.94-2.13-1.53-3.51-1.53-2.66 0-4.81 2.16-4.81 4.81 0 .38.04.75.13 1.1-4-.2-7.58-2.11-9.96-5.02-.42.72-.66 1.56-.66 2.46 0 1.68.85 3.16 2.14 4.02-.79-.02-1.53-.24-2.18-.6v.06c0 2.35 1.67 4.31 3.88 4.76-.4.1-.83.16-1.27.16-.31 0-.62-.03-.92-.08.63 1.96 2.45 3.39 4.61 3.43-1.69 1.32-3.83 2.1-6.15 2.1-.4 0-.8-.02-1.19-.07 2.19 1.4 4.78 2.22 7.57 2.22 9.07 0 14.02-7.52 14.02-14.02 0-.21 0-.43-.01-.64.96-.69 1.79-1.56 2.45-2.55z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // USAR CONFIGURACIÓN DE config.js
+        // ==========================================
+        
+        // ==========================================
+        // ELEMENTOS DEL DOM
+        // ==========================================
+        const form = document.getElementById('supportForm');
+        const messageDiv = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        const screenshotInput = document.getElementById('screenshot');
+        const fileLabel = document.getElementById('fileLabel');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const removeImageBtn = document.getElementById('removeImage');
+        
+        // Variable para guardar imagen pegada
+        let pastedFile = null;
+        
+        // ==========================================
+        // MANEJO DE IMAGEN
+        // ==========================================
+        
+        // Función común para procesar imagen
+        function processImage(file, sourceName) {
+            // Validar tipo de archivo
+            if (!file.type.startsWith('image/')) {
+                showMessage('Por favor seleccione un archivo de imagen válido', 'error');
+                return false;
+            }
+            
+            // Validar tamaño (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage('La imagen no debe superar los 5MB', 'error');
+                return false;
+            }
+            
+            // Mostrar preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.classList.add('show');
+                fileLabel.classList.add('has-file');
+                fileLabel.innerHTML = `
+                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    <span>${sourceName}</span>
+                `;
+            };
+            reader.readAsDataURL(file);
+            return true;
+        }
+        
+        // Selección de archivo tradicional
+        screenshotInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                pastedFile = null; // Limpiar archivo pegado si selecciona uno nuevo
+                processImage(file, file.name);
+            }
+        });
+        
+        // Pegar imagen (Ctrl+V)
+        document.addEventListener('paste', function(e) {
+            const items = e.clipboardData?.items;
+            if (!items) return;
+            
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.startsWith('image/')) {
+                    e.preventDefault();
+                    const file = items[i].getAsFile();
+                    if (file && processImage(file, 'Imagen pegada desde portapapeles')) {
+                        pastedFile = file;
+                        screenshotInput.value = ''; // Limpiar input file
+                    }
+                    break;
+                }
+            }
+        });
+        
+        removeImageBtn.addEventListener('click', function() {
+            screenshotInput.value = '';
+            pastedFile = null;
+            imagePreview.classList.remove('show');
+            fileLabel.classList.remove('has-file');
+            fileLabel.innerHTML = `
+                <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                <span>Haga clic, arrastre o pegue (Ctrl+V) una imagen</span>
+            `;
+        });
+        
+        // ==========================================
+        // FUNCIONES AUXILIARES
+        // ==========================================
+        function showMessage(text, type) {
+            const msgIcon = messageDiv.querySelector('.msg-icon');
+            const msgText = messageDiv.querySelector('.msg-text');
+            
+            // Iconos según tipo
+            const icons = {
+                error: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>',
+                success: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>',
+                info: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>'
+            };
+            
+            msgIcon.innerHTML = icons[type] || icons.info;
+            msgText.textContent = text;
+            messageDiv.className = 'message show ' + type;
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function hideMessage() {
+            messageDiv.classList.remove('show');
+        }
+        
+        function setLoading(loading) {
+            submitBtn.disabled = loading;
+            spinner.classList.toggle('show', loading);
+            btnIcon.style.display = loading ? 'none' : 'inline';
+            btnText.textContent = loading ? 'Enviando...' : 'Enviar Solicitud';
+        }
+        
+        // ==========================================
+        // VALIDAR LLAVE DEL CLIENTE
+        // ==========================================
+        async function validateApiKey(apiKey) {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/clients?api_key=eq.${encodeURIComponent(apiKey)}&is_active=eq.true&select=id,name`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Error al validar la llave');
+                }
+                
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    return { valid: true, clientId: data[0].id, clientName: data[0].name };
+                }
+                
+                return { valid: false };
+            } catch (error) {
+                console.error('Error validando API key:', error);
+                return { valid: false, error: error.message };
+            }
+        }
+        
+        // ==========================================
+        // SUBIR IMAGEN A STORAGE
+        // ==========================================
+        async function uploadScreenshot(file, clientId) {
+            try {
+                const timestamp = Date.now();
+                const extension = file.name.split('.').pop();
+                const fileName = `client_${clientId}/${timestamp}.${extension}`;
+                
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/storage/v1/object/support/${fileName}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': file.type
+                        },
+                        body: file
+                    }
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Error al subir la imagen');
+                }
+                
+                return `${SUPABASE_CONFIG.url}/storage/v1/object/public/support/${fileName}`;
+            } catch (error) {
+                console.error('Error subiendo imagen:', error);
+                return null;
+            }
+        }
+        
+        // ==========================================
+        // CREAR SOLICITUD DE SOPORTE
+        // ==========================================
+        async function createSupportRequest(clientId, requestType, description, screenshotUrl) {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/support_requests`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=representation'
+                        },
+                        body: JSON.stringify({
+                            client_id: clientId,
+                            request_type: requestType,
+                            description: description,
+                            screenshot_url: screenshotUrl
+                        })
+                    }
+                );
+                
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    throw new Error(errorData);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Error creando solicitud:', error);
+                throw error;
+            }
+        }
+        
+        // ==========================================
+        // ENVÍO DEL FORMULARIO
+        // ==========================================
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessage();
+            
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const requestType = document.getElementById('requestType').value;
+            const description = document.getElementById('description').value.trim();
+            const screenshotFile = pastedFile || screenshotInput.files[0]; // Priorizar pegado
+            
+            // Validaciones
+            if (!apiKey) {
+                showMessage('Por favor ingrese su llave de cliente', 'error');
+                return;
+            }
+            
+            if (!requestType) {
+                showMessage('Por favor seleccione el tipo de solicitud', 'error');
+                return;
+            }
+            
+            if (!description) {
+                showMessage('Por favor ingrese una descripción', 'error');
+                return;
+            }
+            
+            if (description.length < 20) {
+                showMessage('La descripción debe tener al menos 20 caracteres', 'error');
+                return;
+            }
+            
+            // Validar reCAPTCHA
+            const recaptchaResponse = grecaptcha.getResponse();
+            if (!recaptchaResponse) {
+                showMessage('Por favor complete el reCAPTCHA', 'error');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                // 1. Validar la llave del cliente
+                showMessage('Validando llave de cliente...', 'info');
+                const validation = await validateApiKey(apiKey);
+                
+                if (!validation.valid) {
+                    showMessage('La llave de cliente no es válida o está inactiva', 'error');
+                    setLoading(false);
+                    grecaptcha.reset();
+                    return;
+                }
+                
+                // 2. Subir imagen si existe
+                let screenshotUrl = null;
+                if (screenshotFile) {
+                    showMessage('Subiendo imagen...', 'info');
+                    screenshotUrl = await uploadScreenshot(screenshotFile, validation.clientId);
+                }
+                
+                // 3. Crear la solicitud
+                showMessage('Enviando solicitud...', 'info');
+                const result = await createSupportRequest(
+                    validation.clientId,
+                    requestType,
+                    description,
+                    screenshotUrl
+                );
+                
+                // Éxito
+                showMessage(
+                    `✅ Solicitud enviada exitosamente. Número de ticket: #${result[0].id}. Nos pondremos en contacto pronto.`,
+                    'success'
+                );
+                
+                // Limpiar formulario
+                form.reset();
+                pastedFile = null;
+                imagePreview.classList.remove('show');
+                fileLabel.classList.remove('has-file');
+                fileLabel.innerHTML = `
+                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                    <span>Haga clic, arrastre o pegue (Ctrl+V) una imagen</span>
+                `;
+                grecaptcha.reset();
+                
+            } catch (error) {
+                showMessage('Error al enviar la solicitud. Por favor intente nuevamente.', 'error');
+                console.error('Error:', error);
+                grecaptcha.reset();
+            } finally {
+                setLoading(false);
+            }
+        });
+        
+        // ==========================================
+        // CARGAR CONFIGURACIÓN DEL SITIO
+        // ==========================================
+        let recaptchaWidgetId = null;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (typeof applySiteConfig === 'function') {
+                const config = await applySiteConfig();
+                
+                // Actualizar nombre en footer
+                if (config.site_name) {
+                    document.getElementById('footer-name').textContent = config.site_name;
+                }
+                
+                // Renderizar reCAPTCHA cuando esté listo
+                if (config.recaptcha_site_key) {
+                    const waitForRecaptcha = setInterval(() => {
+                        if (typeof grecaptcha !== 'undefined' && grecaptcha.render) {
+                            clearInterval(waitForRecaptcha);
+                            try {
+                                recaptchaWidgetId = grecaptcha.render('recaptcha', {
+                                    'sitekey': config.recaptcha_site_key
+                                });
+                            } catch (e) {
+                                console.error('Error renderizando reCAPTCHA:', e);
+                            }
+                        }
+                    }, 100);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
