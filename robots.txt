@@ -1,0 +1,35 @@
+# robots.txt para GestionArte
+# https://gestionarte.co
+
+User-agent: *
+Allow: /
+
+# Bloquear acceso a áreas administrativas y privadas
+Disallow: /admin/
+Disallow: /dashboard.html
+Disallow: /modules/
+Disallow: /login.html
+
+# Bloquear archivos de configuración y scripts
+Disallow: /assets/js/config.js
+Disallow: /*.js$
+
+# Permitir explícitamente páginas públicas importantes
+Allow: /index.html
+Allow: /demo.html
+Allow: /soporte.html
+Allow: /actualizaciones.html
+
+# Sitemap
+Sitemap: https://gestionarte.co/sitemap.xml
+
+# Rastreo específico para Google
+User-agent: Googlebot
+Allow: /
+
+# Rastreo específico para Bing
+User-agent: Bingbot
+Allow: /
+
+# Crawl-delay para evitar sobrecarga del servidor
+Crawl-delay: 1
