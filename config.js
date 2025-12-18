@@ -1,7 +1,6 @@
 // ==========================================
 // CONFIGURACIÓN DE SUPABASE
 // ==========================================
-
 // Nota: En producción, estas variables vienen de Vercel Environment Variables
 const SUPABASE_CONFIG = {
     url: typeof window !== 'undefined' && window.location.hostname === 'localhost' 
@@ -13,7 +12,6 @@ const SUPABASE_CONFIG = {
 // ==========================================
 // CARGAR CONFIGURACIÓN DEL SITIO
 // ==========================================
-
 async function loadSiteConfig() {
     try {
         const response = await fetch(
@@ -46,7 +44,7 @@ async function loadSiteConfig() {
     
     // Valores por defecto si falla
     return {
-        site_name: 'SchoolNext',
+        site_name: 'GestionArte',
         primary_color: '#667eea',
         secondary_color: '#764ba2',
         tertiary_color: '#764ba2',
@@ -58,7 +56,6 @@ async function loadSiteConfig() {
 // ==========================================
 // APLICAR COLORES DINÁMICOS
 // ==========================================
-
 async function applySiteConfig() {
     const config = await loadSiteConfig();
     
@@ -86,7 +83,6 @@ async function applySiteConfig() {
 // ==========================================
 // INICIALIZAR AL CARGAR LA PÁGINA
 // ==========================================
-
 if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', async () => {
         await applySiteConfig();
