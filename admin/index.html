@@ -2030,20 +2030,21 @@
             const update = allUpdates.find(u => u.id === id);
             if (!update) return;
             
+            // Abrir modal primero (sin limpiar, pasamos el id)
+            openModal('update', id);
+            
+            // Luego cargar los datos
             document.getElementById('modal-update-title').textContent = 'Editar Actualización';
             document.getElementById('update-id').value = id;
             document.getElementById('update-module').value = update.module;
             document.getElementById('update-feature').value = update.feature;
             document.getElementById('update-version').value = update.version;
+            document.getElementById('update-published').checked = update.is_published;
             
             // Cargar contenido en Quill
             if (quillEditor) {
                 quillEditor.root.innerHTML = update.detail || '';
             }
-            
-            document.getElementById('update-published').checked = update.is_published;
-            
-            openModal('update');
         }
         
         async function saveUpdate() {
@@ -2400,7 +2401,7 @@
         // ==========================================
         // UTILIDADES GENERALES
         // ==========================================
-        function openModal(type) {
+        function openModal(type, editId = null) {
             if (type === 'client') {
                 document.getElementById('modal-client-title').textContent = 'Nuevo Cliente';
                 document.getElementById('client-id').value = '';
@@ -2425,18 +2426,21 @@
                 document.getElementById('user-password').value = '';
                 document.getElementById('password-hint').textContent = '(requerida)';
             } else if (type === 'update') {
-                document.getElementById('modal-update-title').textContent = 'Nueva Actualización';
-                document.getElementById('update-id').value = '';
-                document.getElementById('update-module').value = '';
-                document.getElementById('update-feature').value = '';
-                document.getElementById('update-version').value = '';
-                
-                // Limpiar editor Quill
-                if (quillEditor) {
-                    quillEditor.setContents([]);
+                // Solo limpiar si NO es una edición
+                if (!editId) {
+                    document.getElementById('modal-update-title').textContent = 'Nueva Actualización';
+                    document.getElementById('update-id').value = '';
+                    document.getElementById('update-module').value = '';
+                    document.getElementById('update-feature').value = '';
+                    document.getElementById('update-version').value = '';
+                    document.getElementById('update-published').checked = true;
+                    
+                    // Limpiar editor Quill solo para nueva actualización
+                    if (quillEditor) {
+                        quillEditor.setContents([]);
+                    }
                 }
-                
-                document.getElementById('update-published').checked = true;
+                // Si es edición (editId existe), no limpiar nada
             }
             document.getElementById(`modal-${type}`).classList.add('show');
         }
