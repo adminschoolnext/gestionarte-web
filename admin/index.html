@@ -12,6 +12,10 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
     <style>
         /* Variables CSS para colores dinámicos */
         :root {
@@ -396,6 +400,39 @@
         .form-group textarea:focus {
             outline: none;
             border-color: var(--primary-color);
+        }
+        
+        /* Quill Editor Styles */
+        .quill-container {
+            background: white;
+            border-radius: 6px;
+        }
+        
+        #update-detail-editor {
+            min-height: 200px;
+            border: 1px solid #dee2e6;
+            border-radius: 0 0 6px 6px;
+        }
+        
+        .ql-toolbar {
+            border-radius: 6px 6px 0 0;
+            border: 1px solid #dee2e6;
+            background: #f8f9fa;
+        }
+        
+        .ql-editor {
+            min-height: 200px;
+            font-size: 0.95rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .ql-editor.ql-blank::before {
+            color: #8A9A9A;
+            font-style: normal;
+        }
+        
+        .ql-snow .ql-picker {
+            font-size: 0.9rem;
         }
         
         .detail-row {
@@ -1320,7 +1357,10 @@
                 </div>
                 <div class="form-group">
                     <label>Detalle *</label>
-                    <textarea id="update-detail" placeholder="Descripción detallada de la actualización..."></textarea>
+                    <div class="quill-container">
+                        <div id="update-detail-editor"></div>
+                    </div>
+                    <input type="hidden" id="update-detail">
                 </div>
                 <div class="form-group">
                     <label>
@@ -1400,6 +1440,7 @@
         let allUpdates = [];
         let currentRequestId = null;
         let currentConfig = null;
+        let quillEditor = null;
         
         // ==========================================
         // INICIALIZACIÓN
@@ -1414,6 +1455,21 @@
                     document.getElementById('footer-name').textContent = config.site_name;
                 }
             }
+            
+            // Inicializar Quill Editor
+            quillEditor = new Quill('#update-detail-editor', {
+                theme: 'snow',
+                placeholder: 'Descripción detallada de la actualización...\n\nPuedes usar:\n• Negritas, cursivas\n• Listas con viñetas\n• Títulos y subtítulos',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
             
             // Cargar datos iniciales
             loadRequests();
@@ -1917,12 +1973,18 @@
                 return;
             }
             
-            tbody.innerHTML = updates.map(u => `
+            tbody.innerHTML = updates.map(u => {
+                // Extraer texto sin HTML para la vista previa
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = u.detail;
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                
+                return `
                 <tr>
                     <td><strong>${u.module}</strong></td>
                     <td>${u.feature}</td>
                     <td><code style="background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px;">${u.version}</code></td>
-                    <td>${u.detail.substring(0, 60)}${u.detail.length > 60 ? '...' : ''}</td>
+                    <td>${plainText.substring(0, 60)}${plainText.length > 60 ? '...' : ''}</td>
                     <td><span class="badge ${u.is_published ? 'badge-resolved' : 'badge-pending'}">${u.is_published ? 'Publicado' : 'Borrador'}</span></td>
                     <td>${formatDate(u.published_at)}</td>
                     <td>
@@ -1937,7 +1999,8 @@
                         </button>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
         
         function populateModuleFilter() {
@@ -1972,7 +2035,12 @@
             document.getElementById('update-module').value = update.module;
             document.getElementById('update-feature').value = update.feature;
             document.getElementById('update-version').value = update.version;
-            document.getElementById('update-detail').value = update.detail;
+            
+            // Cargar contenido en Quill
+            if (quillEditor) {
+                quillEditor.root.innerHTML = update.detail || '';
+            }
+            
             document.getElementById('update-published').checked = update.is_published;
             
             openModal('update');
@@ -1981,16 +2049,20 @@
         async function saveUpdate() {
             const id = document.getElementById('update-id').value;
             const isPublished = document.getElementById('update-published').checked;
+            
+            // Obtener contenido HTML del editor Quill
+            const detailHTML = quillEditor.root.innerHTML;
+            
             const data = {
                 module: document.getElementById('update-module').value,
                 feature: document.getElementById('update-feature').value,
                 version: document.getElementById('update-version').value,
-                detail: document.getElementById('update-detail').value,
+                detail: detailHTML,
                 is_published: isPublished,
                 updated_at: new Date().toISOString()
             };
             
-            if (!data.module || !data.feature || !data.version || !data.detail) {
+            if (!data.module || !data.feature || !data.version || !detailHTML || detailHTML === '<p><br></p>') {
                 alert('Todos los campos son requeridos');
                 return;
             }
@@ -2358,7 +2430,12 @@
                 document.getElementById('update-module').value = '';
                 document.getElementById('update-feature').value = '';
                 document.getElementById('update-version').value = '';
-                document.getElementById('update-detail').value = '';
+                
+                // Limpiar editor Quill
+                if (quillEditor) {
+                    quillEditor.setContents([]);
+                }
+                
                 document.getElementById('update-published').checked = true;
             }
             document.getElementById(`modal-${type}`).classList.add('show');
