@@ -975,19 +975,21 @@ CREATE TABLE IF NOT EXISTS public.survey_question_logic (
     CONSTRAINT survey_question_logic_unique_active UNIQUE (question_id, is_active)
 );
 
--- Comentarios
 COMMENT ON TABLE public.survey_question_logic IS 
-'Lógica condicional para encuestas (skip logic). Permite saltar a secciones específicas según respuesta. Agregada en migración 003.';
+'Lógica condicional para encuestas (skip logic). Permite saltar a secciones específicas según respuesta. Agregada en migración 005.';
+
 COMMENT ON COLUMN public.survey_question_logic.question_id IS 
 'ID de la pregunta que tiene la regla condicional';
+
 COMMENT ON COLUMN public.survey_question_logic.condition_type IS 
 'Tipo de condición: equals, not_equals, contains, greater_than, less_than';
+
 COMMENT ON COLUMN public.survey_question_logic.condition_value IS 
 'Valor que debe cumplir la respuesta para activar el salto';
+
 COMMENT ON COLUMN public.survey_question_logic.target_section_id IS 
 'ID de la sección a la que se saltará si se cumple la condición';
 
--- Índices
 CREATE INDEX IF NOT EXISTS idx_survey_question_logic_question 
     ON public.survey_question_logic(question_id) 
     WHERE is_active = true;
