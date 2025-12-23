@@ -1,39 +1,60 @@
 -- ============================================================
--- Migration: 005_add_survey_question_logic.sql
--- Version: 6
--- Description: Agrega lógica condicional a preguntas de encuestas
--- Date: 2024-12-20
--- Author: GestionArte Team
+-- CREAR TABLA: survey_question_logic
 -- ============================================================
 
--- Agregar columnas para lógica condicional en survey_questions
-ALTER TABLE public.survey_questions 
-ADD COLUMN IF NOT EXISTS show_if_question_id uuid,
-ADD COLUMN IF NOT EXISTS show_if_response_value integer,
-ADD COLUMN IF NOT EXISTS show_if_response_text text;
+CREATE TABLE IF NOT EXISTS public.survey_question_logic (
+  logic_id uuid NOT NULL DEFAULT gen_random_uuid(),
+  question_id uuid NOT NULL,
+  condition_type character varying(50) NOT NULL,
+  condition_value text NOT NULL,
+  target_section_id uuid NOT NULL,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  created_by uuid NOT NULL,
+  
+  CONSTRAINT survey_question_logic_pkey PRIMARY KEY (logic_id),
+  CONSTRAINT survey_question_logic_unique_active UNIQUE (question_id, is_active),
+  CONSTRAINT survey_question_logic_created_by_fkey 
+    FOREIGN KEY (created_by) REFERENCES public.users (user_id),
+  CONSTRAINT survey_question_logic_question_fkey 
+    FOREIGN KEY (question_id) REFERENCES public.survey_questions (question_id) 
+    ON DELETE CASCADE,
+  CONSTRAINT survey_question_logic_target_section_fkey 
+    FOREIGN KEY (target_section_id) REFERENCES public.survey_sections (section_id) 
+    ON DELETE CASCADE,
+  CONSTRAINT survey_question_logic_condition_type_check 
+    CHECK (
+      condition_type IN (
+        'equals', 
+        'not_equals', 
+        'contains', 
+        'greater_than', 
+        'less_than'
+      )
+    )
+);
 
--- Agregar constraint para la lógica condicional
-ALTER TABLE public.survey_questions
-ADD CONSTRAINT survey_questions_show_if_question_fkey 
-FOREIGN KEY (show_if_question_id) 
-REFERENCES public.survey_questions(question_id)
-ON DELETE SET NULL;
+-- Índices para mejorar performance
+CREATE INDEX IF NOT EXISTS idx_survey_question_logic_question 
+ON public.survey_question_logic (question_id) 
+WHERE is_active = true;
 
--- Agregar índices para mejorar performance
-CREATE INDEX IF NOT EXISTS idx_survey_questions_show_if 
-ON public.survey_questions(show_if_question_id);
+CREATE INDEX IF NOT EXISTS idx_survey_question_logic_target_section 
+ON public.survey_question_logic (target_section_id);
+
+-- Dar permisos (sin RLS)
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.survey_question_logic TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.survey_question_logic TO authenticated;
+
+-- Recargar schema cache
+NOTIFY pgrst, 'reload schema';
 
 -- Comentarios
-COMMENT ON COLUMN public.survey_questions.show_if_question_id IS 
-'ID de la pregunta de la cual depende esta pregunta (lógica condicional)';
+COMMENT ON TABLE public.survey_question_logic IS 
+'Tabla para configurar lógica condicional de saltos entre secciones basada en respuestas';
 
-COMMENT ON COLUMN public.survey_questions.show_if_response_value IS 
-'Valor de respuesta que debe tener la pregunta padre para mostrar esta pregunta';
+COMMENT ON COLUMN public.survey_question_logic.condition_type IS 
+'Tipo de condición: equals, not_equals, contains, greater_than, less_than';
 
-COMMENT ON COLUMN public.survey_questions.show_if_response_text IS 
-'Texto de respuesta que debe tener la pregunta padre para mostrar esta pregunta';
-
--- ============================================================
--- FIN DE MIGRACIÓN 005
--- ============================================================
-
+COMMENT ON COLUMN public.survey_question_logic.target_section_id IS 
+'ID de la sección a la que se salta si se cumple la condición';
