@@ -2524,15 +2524,13 @@
         }
 
         // Versión actual del esquema - INCREMENTAR con cada nueva migración
-        const CURRENT_SCHEMA_VERSION = 6;
+        const CURRENT_SCHEMA_VERSION = 5;
         
-        // URLs con cachebust para forzar descarga fresca
         const MIGRATION_FILES = {
             2: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/001_add_get_public_tables.sql',
             3: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/002_add_notification_sender_name.sql',
             4: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/003_add_oauth_support_users.sql',
             5: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/004_add_oauth_support_system_config.sql',
-            6: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/005_add_survey_question_logic.sql',
         };
         
         // ============================================================
