@@ -14,7 +14,7 @@
     
     <!-- Article Dates (para AIO) -->
     <meta property="article:published_time" content="2025-12-18T00:00:00+00:00">
-    <meta property="article:modified_time" content="2025-12-18T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-01-06T00:00:00+00:00">
     <meta property="article:author" content="GestionArte">
     
     <!-- Open Graph / Facebook -->
@@ -43,6 +43,9 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet"></noscript>
     
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    
     <!-- Schema.org JSON-LD (Optimizado para AIO) -->
     <script type="application/ld+json">
     {
@@ -55,8 +58,8 @@
           "operatingSystem": "Web Browser",
           "offers": {
             "@type": "AggregateOffer",
-            "lowPrice": "50",
-            "highPrice": "500",
+            "lowPrice": "99",
+            "highPrice": "299",
             "priceCurrency": "USD",
             "availability": "https://schema.org/InStock"
           },
@@ -79,7 +82,7 @@
           ],
           "url": "https://gestionarte.co",
           "datePublished": "2025-12-18",
-          "dateModified": "2025-12-18"
+          "dateModified": "2026-01-06"
         },
         {
           "@type": "Organization",
@@ -96,7 +99,7 @@
             "@type": "ContactPoint",
             "contactType": "Ventas",
             "email": "contacto@gestionarte.co",
-            "areaServed": "CO",
+            "areaServed": ["CO", "MX", "AR", "CL", "PE", "EC", "GT", "HN", "SV", "PA", "CR", "UY", "PY", "BO", "DO"],
             "availableLanguage": "Spanish"
           }
         },
@@ -116,7 +119,7 @@
               "name": "¿Cuánto cuesta GestionArte?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "GestionArte tiene planes desde $50 USD mensuales para organizaciones pequeñas (hasta 50 usuarios) hasta $500 USD mensuales para empresas de 5,000+ empleados. Incluye todos los módulos y funcionalidades sin costos adicionales."
+                "text": "GestionArte tiene precios diferenciados por país basados en el salario mínimo local (aproximadamente 50% del salario mínimo mensual, una vez al año). Los precios van desde $99 USD/año en Argentina hasta $299 USD/año en Chile, Costa Rica, Panamá y Uruguay. Incluye todos los módulos y usuarios ilimitados."
               }
             },
             {
@@ -140,7 +143,7 @@
               "name": "¿Para qué tipo de organizaciones es GestionArte?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "GestionArte es ideal para organizaciones de 50 a 5,000+ empleados en sectores como educación (universidades, colegios), salud (hospitales, clínicas), manufactura, servicios profesionales y entidades gubernamentales. Especialmente útil para organizaciones que buscan certificaciones ISO o cumplimiento normativo."
+                "text": "GestionArte es ideal para organizaciones de 10 a 5,000+ empleados en sectores como educación (universidades, colegios), salud (hospitales, clínicas), manufactura, servicios profesionales y entidades gubernamentales. Especialmente útil para organizaciones que buscan certificaciones ISO o cumplimiento normativo."
               }
             }
           ]
@@ -863,6 +866,279 @@
         }
         .tech-card p { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; margin: 0; }
 
+        /* ===== PRICING SECTION ===== */
+        .pricing-section {
+            padding: 6rem 0;
+            background: var(--surface);
+        }
+
+        .pricing-section .section-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.7;
+        }
+
+        .pricing-section .section-subtitle strong {
+            color: var(--primary);
+        }
+
+        .pricing-philosophy {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem auto 3rem;
+            max-width: 800px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .pricing-philosophy h4 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .pricing-philosophy p {
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+        }
+
+        .pricing-philosophy p:last-child {
+            margin-bottom: 0;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .pricing-table-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--surface-alt);
+        }
+
+        .pricing-table-header {
+            background: var(--gradient-hero);
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+
+        .pricing-table-header h3 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.5rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: white;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .pricing-table thead {
+            background: var(--light);
+        }
+
+        .pricing-table thead th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--surface-alt);
+        }
+
+        .pricing-table thead th:last-child {
+            text-align: right;
+        }
+
+        .pricing-table tbody tr {
+            transition: background 0.2s;
+        }
+
+        .pricing-table tbody tr:hover {
+            background: var(--light);
+        }
+
+        .pricing-table tbody td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--surface-alt);
+            color: var(--text);
+        }
+
+        .pricing-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pricing-table .country-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .pricing-table .country-flag {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .pricing-table .price-cell {
+            text-align: right;
+        }
+
+        .pricing-table .price-annual {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .pricing-table .price-monthly {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Bandas de precio - colores sutiles */
+        .pricing-table tr[data-band="indigo"] {
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .pricing-table tr[data-band="naranja"] {
+            background: rgba(251, 146, 60, 0.05);
+        }
+        .pricing-table tr[data-band="verde"] {
+            background: rgba(45, 139, 122, 0.05);
+        }
+        .pricing-table tr[data-band="azul"] {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .pricing-includes {
+            max-width: 900px;
+            margin: 3rem auto 0;
+            background: var(--light);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--surface-alt);
+        }
+
+        .pricing-includes h4 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .includes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .include-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            color: var(--text);
+        }
+
+        .include-item i {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        .pricing-infra-note {
+            max-width: 900px;
+            margin: 2rem auto 0;
+            padding: 1.5rem;
+            background: var(--surface-alt);
+            border-radius: 12px;
+            border: 1px solid var(--surface-alt);
+        }
+
+        .pricing-infra-note h5 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .pricing-infra-note p {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .pricing-footnote {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            font-style: italic;
+        }
+
+        .pricing-cta {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .pricing-cta .btn-pricing {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-md);
+        }
+
+        .pricing-cta .btn-pricing:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pricing-cta .cta-secondary-text {
+            display: block;
+            margin-top: 1rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .pricing-cta .cta-secondary-text a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .pricing-cta .cta-secondary-text a:hover {
+            text-decoration: underline;
+        }
+
         /* ===== CTA SECTION ===== */
         .cta {
             padding: 6rem 0;
@@ -981,6 +1257,30 @@
             .footer-brand { max-width: 100%; }
             .footer-logo { justify-content: center; }
             .footer-bottom { flex-direction: column; text-align: center; }
+            
+            /* Pricing responsive */
+            .pricing-table thead { display: none; }
+            .pricing-table tbody tr {
+                display: block;
+                padding: 1rem;
+                margin-bottom: 0.5rem;
+                border-bottom: 1px solid var(--surface-alt);
+            }
+            .pricing-table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border: none;
+            }
+            .pricing-table .country-cell { font-size: 1.1rem; }
+            .pricing-table .price-cell { text-align: right; }
+            .pricing-philosophy,
+            .pricing-includes,
+            .pricing-infra-note {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1006,6 +1306,7 @@
             <li><a href="#problemas">El Problema</a></li>
             <li><a href="#modulos">Módulos</a></li>
             <li><a href="#beneficios">Beneficios</a></li>
+            <li><a href="#precios">Precios</a></li>
             <li><a href="#tecnologia">Tecnología</a></li>
             <li><a href="actualizaciones.html">Actualizaciones</a></li>
             <li><a href="soporte.html">Soporte</a></li>
@@ -1034,7 +1335,7 @@
                         <span class="hero-subtitle">Software Completo de Gestión Empresarial</span>
                     </h1>
                     <p class="hero-updated">
-                        ✨ Actualizado: Diciembre 2025 | Versión 2.0
+                        ✨ Actualizado: Enero 2026 | Versión 2.1
                     </p>
                     <p class="hero-description">La solución completa para la administración moderna de organizaciones. Integra indicadores, formación, encuestas, procedimientos y más en una sola plataforma.</p>
                     <div class="hero-buttons">
@@ -1171,12 +1472,13 @@
                     
                     <h3>Precios:</h3>
                     <p class="what-is-price">
-                        <strong>$1.500.000 COP anuales</strong> para todo tipo de organizaciones, sin importar el número de trabajadores ni el número de usuarios. 
-                        Todos los módulos y funcionalidades incluidos sin costos adicionales.
+                        <strong>Precios diferenciados por país</strong> basados en el salario mínimo local (aproximadamente 50% del salario mínimo mensual, una vez al año). 
+                        Desde <strong>$99 USD/año</strong> hasta <strong>$299 USD/año</strong> según tu país. 
+                        Usuarios ilimitados y todos los módulos incluidos. <a href="#precios">Ver tabla de precios →</a>
                     </p>
                     
                     <p class="what-is-updated">
-                        <em>📅 Información actualizada: Diciembre 2025</em>
+                        <em>📅 Información actualizada: Enero 2026</em>
                     </p>
                 </div>
                 
@@ -1191,8 +1493,8 @@
                             <div class="stat-label">Funcionalidades<br>Totales</div>
                         </div>
                         <div class="what-is-stat-card">
-                            <div class="stat-number">50-5K</div>
-                            <div class="stat-label">Usuarios<br>Soportados</div>
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">Países<br>LATAM</div>
                         </div>
                         <div class="what-is-stat-card">
                             <div class="stat-number">100%</div>
@@ -1223,7 +1525,6 @@
                         <strong>Impacto:</strong> Según McKinsey Global Institute (2012), los empleados 
                         gastan 1.8 horas diarias —9.3 horas semanales en promedio— buscando y recopilando 
                         información en sistemas dispersos.
-                        <br><em>Fuente: McKinsey, "The social economy" (2012)</em>
                     </p>
                 </article>
                 <article class="problem-card">
@@ -1236,7 +1537,6 @@
                         <strong>Impacto:</strong> Smartsheet (2019) encontró que casi el 60% de 
                         trabajadores estiman que podrían ahorrar 6+ horas semanales —casi un día 
                         laboral completo— si se automatizaran las tareas repetitivas.
-                        <br><em>Fuente: Smartsheet, "Automation in the Workplace" (2019)</em>
                     </p>
                 </article>
                 <article class="problem-card">
@@ -1248,8 +1548,7 @@
                     <p class="problem-stat">
                         <strong>Impacto:</strong> Según BARC Research (2024), el 58% de organizaciones 
                         basa al menos la mitad de sus decisiones empresariales en intuición, en lugar 
-                        de datos verificables, aumentando el riesgo de errores estratégicos.
-                        <br><em>Fuente: BARC Research (2024)</em>
+                        de datos verificables.
                     </p>
                 </article>
                 <article class="problem-card">
@@ -1260,9 +1559,7 @@
                     <p>Capacitaciones sin control, certificaciones vencidas, sin claridad de quién necesita qué formación.</p>
                     <p class="problem-stat">
                         <strong>Impacto:</strong> Según Gartner, el 76% de las empresas fallaron una 
-                        auditoría de cumplimiento debido a registros de capacitación incompletos, 
-                        generando riesgos legales y de certificación.
-                        <br><em>Fuente: Gartner, citado por Absorb LMS</em>
+                        auditoría de cumplimiento debido a registros de capacitación incompletos.
                     </p>
                 </article>
                 <article class="problem-card">
@@ -1273,9 +1570,7 @@
                     <p>PQR que se pierden, clientes insatisfechos, incumplimiento de plazos legales. Riesgo reputacional y legal.</p>
                     <p class="problem-stat">
                         <strong>Impacto:</strong> El estándar de la industria establece que las 
-                        organizaciones deben mantener al menos un 95% de cumplimiento de SLA. 
-                        Sin sistemas automatizados, muchas operan por debajo de este umbral.
-                        <br><em>Fuente: Industry standard, GetCensus & Gridlex (2025)</em>
+                        organizaciones deben mantener al menos un 95% de cumplimiento de SLA.
                     </p>
                 </article>
                 <article class="problem-card">
@@ -1286,9 +1581,7 @@
                     <p>Se aplican encuestas pero no se analizan. Información valiosa que nunca se convierte en acción.</p>
                     <p class="problem-stat">
                         <strong>Impacto:</strong> Las empresas que actúan sobre el feedback de 
-                        encuestas logran 80% de engagement vs solo 40% cuando no lo hacen. 
-                        El problema no es recopilar datos, sino actuar sobre ellos.
-                        <br><em>Fuente: Zavvy, análisis de estudios de engagement</em>
+                        encuestas logran 80% de engagement vs solo 40% cuando no lo hacen.
                     </p>
                 </article>
             </div>
@@ -1532,6 +1825,289 @@
             </div>
         </div>
     </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="precios">
+        <div class="container">
+            <!-- Encabezado -->
+            <div class="section-header">
+                <span class="section-label">Precios</span>
+                <h2>Gestión de Clase Mundial, Precio Justo para Tu País</h2>
+                <p class="section-subtitle">
+                    Creemos que la buena gestión no debería ser un privilegio. Nuestro precio se ajusta al costo de vida de cada país: 
+                    <strong>pagas aproximadamente el 50% de un salario mínimo mensual de tu país, una vez al año.</strong>
+                </p>
+            </div>
+
+            <!-- Filosofía de precios -->
+            <div class="pricing-philosophy">
+                <h4><i class="bi bi-lightbulb"></i> ¿Por qué precios diferenciados?</h4>
+                <p>
+                    Las herramientas de gestión empresarial suelen costar lo mismo sin importar si estás en San José o en Buenos Aires. Eso no es justo.
+                </p>
+                <p>
+                    En GestionArte calculamos el precio para cada país basándonos en su salario mínimo local. El resultado: una organización en Argentina paga menos que una en Chile, pero ambas hacen el mismo esfuerzo económico relativo.
+                </p>
+                <p>
+                    Mismo software. Mismas funcionalidades. Mismo soporte. Precio adaptado a tu realidad.
+                </p>
+            </div>
+
+            <!-- Tabla de precios -->
+            <div class="pricing-table-container">
+                <div class="pricing-table-header">
+                    <h3><i class="bi bi-globe-americas"></i> Tu inversión anual según tu país</h3>
+                </div>
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>País</th>
+                            <th>Precio Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-band="indigo">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇦🇷</span>
+                                    <span>Argentina</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$99 USD</div>
+                                <div class="price-monthly">~$8/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="naranja">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇧🇴</span>
+                                    <span>Bolivia</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$149 USD</div>
+                                <div class="price-monthly">~$12/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="azul">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇨🇱</span>
+                                    <span>Chile</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$299 USD</div>
+                                <div class="price-monthly">~$25/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="verde">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇨🇴</span>
+                                    <span>Colombia</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$230 USD</div>
+                                <div class="price-monthly">~$19/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="azul">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇨🇷</span>
+                                    <span>Costa Rica</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$299 USD</div>
+                                <div class="price-monthly">~$25/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="verde">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇪🇨</span>
+                                    <span>Ecuador</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$230 USD</div>
+                                <div class="price-monthly">~$19/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="naranja">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇸🇻</span>
+                                    <span>El Salvador</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$149 USD</div>
+                                <div class="price-monthly">~$12/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="verde">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇬🇹</span>
+                                    <span>Guatemala</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$230 USD</div>
+                                <div class="price-monthly">~$19/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="verde">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇭🇳</span>
+                                    <span>Honduras</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$230 USD</div>
+                                <div class="price-monthly">~$19/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="verde">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇲🇽</span>
+                                    <span>México</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$230 USD</div>
+                                <div class="price-monthly">~$19/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="azul">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇵🇦</span>
+                                    <span>Panamá</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$299 USD</div>
+                                <div class="price-monthly">~$25/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="verde">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇵🇾</span>
+                                    <span>Paraguay</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$230 USD</div>
+                                <div class="price-monthly">~$19/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="naranja">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇵🇪</span>
+                                    <span>Perú</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$149 USD</div>
+                                <div class="price-monthly">~$12/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="verde">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇩🇴</span>
+                                    <span>República Dominicana</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$230 USD</div>
+                                <div class="price-monthly">~$19/mes</div>
+                            </td>
+                        </tr>
+                        <tr data-band="azul">
+                            <td>
+                                <div class="country-cell">
+                                    <span class="country-flag">🇺🇾</span>
+                                    <span>Uruguay</span>
+                                </div>
+                            </td>
+                            <td class="price-cell">
+                                <div class="price-annual">$299 USD</div>
+                                <div class="price-monthly">~$25/mes</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Qué incluye -->
+            <div class="pricing-includes">
+                <h4><i class="bi bi-check-circle"></i> Todo incluido, sin sorpresas</h4>
+                <div class="includes-grid">
+                    <div class="include-item">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Los 7 módulos completos (66+ funcionalidades)</span>
+                    </div>
+                    <div class="include-item">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Usuarios ilimitados</span>
+                    </div>
+                    <div class="include-item">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Base de datos aislada exclusiva</span>
+                    </div>
+                    <div class="include-item">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Soporte incluido</span>
+                    </div>
+                    <div class="include-item">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Actualizaciones automáticas</span>
+                    </div>
+                    <div class="include-item">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Sin costos de implementación</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nota sobre infraestructura -->
+            <div class="pricing-infra-note">
+                <h5><i class="bi bi-database"></i> Sobre la infraestructura</h5>
+                <p>
+                    Tu suscripción opera sobre Supabase con un plan gratuito que cubre las necesidades del 99% de las organizaciones. 
+                    Solo en casos de uso intensivo (miles de documentos o cientos de usuarios muy activos) podrías necesitar el plan Pro 
+                    de Supabase ($25 USD/mes), que pagarías directamente a ellos.
+                </p>
+            </div>
+
+            <!-- Nota al pie -->
+            <p class="pricing-footnote">
+                Precios calculados con base en salarios mínimos 2026. Se revisan anualmente.
+            </p>
+
+            <!-- CTA -->
+            <div class="pricing-cta">
+                <a href="#ENLACE_FORMULARIO" class="btn-pricing">
+                    <i class="bi bi-rocket-takeoff"></i>
+                    Solicitar Acceso
+                </a>
+                <p class="cta-secondary-text">
+                    ¿Tu país no está en la lista? <a href="mailto:contacto@gestionarte.co">Escríbenos</a> y encontramos una solución.
+                </p>
+            </div>
+        </div>
+    </section>
     
     <!-- Tecnología y Seguridad -->
     <section class="technology" id="tecnologia">
@@ -1585,7 +2161,7 @@
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                     </div>
                     <h3>Escalable</h3>
-                    <p>Arquitectura diseñada para crecer contigo. Desde 50 hasta 5,000+ usuarios sin cambios en la plataforma.</p>
+                    <p>Arquitectura diseñada para crecer contigo. Desde 10 hasta 5,000+ usuarios sin cambios en la plataforma.</p>
                 </article>
             </div>
         </div>
@@ -1602,8 +2178,8 @@
                         Acceso a Demo
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
                     </a>
-                    <a href="#modulos" class="btn btn-secondary">
-                        Ver Funcionalidades
+                    <a href="#precios" class="btn btn-secondary">
+                        Ver Precios
                     </a>
                 </div>
             </div>
@@ -1630,7 +2206,7 @@
                         <li><a href="#modulos">Módulos</a></li>
                         <li><a href="#beneficios">Beneficios</a></li>
                         <li><a href="#tecnologia">Tecnología</a></li>
-                        <li><a href="#">Precios</a></li>
+                        <li><a href="#precios">Precios</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -1653,7 +2229,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2025 GestionArte. Todos los derechos reservados.</p>
+                <p>© 2026 GestionArte. Todos los derechos reservados.</p>
                 <div class="footer-social">
                     <a href="#" aria-label="LinkedIn">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
