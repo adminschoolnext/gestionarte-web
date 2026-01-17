@@ -2818,7 +2818,8 @@
         }
 
         // Versión actual del esquema - INCREMENTAR con cada nueva migración
-        const CURRENT_SCHEMA_VERSION = 6;
+        // DESPUÉS (con la nueva migración):
+        const CURRENT_SCHEMA_VERSION = 7;
         
         const MIGRATION_FILES = {
             2: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/001_add_get_public_tables.sql',
@@ -2826,6 +2827,7 @@
             4: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/003_add_oauth_support_users.sql',
             5: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/004_add_oauth_support_system_config.sql',
             6: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/005_add_form_field_conditional_logic.sql',
+            7: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/006_add_projects_module.sql',
         };
         
         // ============================================================
