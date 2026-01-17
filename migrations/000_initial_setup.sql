@@ -683,6 +683,114 @@ CREATE TABLE IF NOT EXISTS public.kpi_user_dashboard_variables (
 );
 
 -- ============================================================
+-- MÓDULO: PROYECTOS
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.projects (
+    project_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    project_name character varying(200) NOT NULL,
+    project_description text,
+    project_purpose text NOT NULL,
+    project_objective text NOT NULL,
+    objective_target_value numeric,
+    objective_current_value numeric,
+    objective_unit character varying(50),
+    leader_email character varying NOT NULL,
+    leader_name character varying NOT NULL,
+    start_date date NOT NULL,
+    expected_end_date date NOT NULL,
+    actual_end_date date,
+    project_status character varying NOT NULL DEFAULT 'Activo'::character varying
+        CHECK (project_status::text = ANY (ARRAY['Activo'::character varying, 'En Pausa'::character varying, 'Completado'::character varying, 'Cancelado'::character varying]::text[])),
+    status_change_reason text,
+    created_by uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT projects_pkey PRIMARY KEY (project_id),
+    CONSTRAINT projects_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.project_participants (
+    participant_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    project_id uuid NOT NULL,
+    user_email character varying NOT NULL,
+    worker_name character varying NOT NULL,
+    participant_role character varying NOT NULL
+        CHECK (participant_role::text = ANY (ARRAY['Colaborador'::character varying, 'Observador'::character varying]::text[])),
+    added_by uuid NOT NULL,
+    added_by_name character varying,
+    added_at timestamp with time zone NOT NULL DEFAULT now(),
+    participant_status character varying NOT NULL DEFAULT 'active'::character varying
+        CHECK (participant_status::text = ANY (ARRAY['active'::character varying, 'removed'::character varying]::text[])),
+    removed_at timestamp with time zone,
+    removed_by uuid,
+    removal_reason text,
+    CONSTRAINT project_participants_pkey PRIMARY KEY (participant_id),
+    CONSTRAINT project_participants_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id) ON DELETE CASCADE,
+    CONSTRAINT project_participants_added_by_fkey FOREIGN KEY (added_by) REFERENCES public.users(user_id),
+    CONSTRAINT project_participants_removed_by_fkey FOREIGN KEY (removed_by) REFERENCES public.users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.project_milestones (
+    milestone_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    project_id uuid NOT NULL,
+    milestone_name character varying(200) NOT NULL,
+    milestone_description text,
+    milestone_order integer NOT NULL DEFAULT 1,
+    committed_date date NOT NULL,
+    actual_date date,
+    milestone_status character varying NOT NULL DEFAULT 'Pendiente'::character varying
+        CHECK (milestone_status::text = ANY (ARRAY['Pendiente'::character varying, 'Cumplido'::character varying, 'Vencido'::character varying]::text[])),
+    completion_notes text,
+    created_by uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT project_milestones_pkey PRIMARY KEY (milestone_id),
+    CONSTRAINT project_milestones_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id) ON DELETE CASCADE,
+    CONSTRAINT project_milestones_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.project_minutes (
+    minute_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    project_id uuid NOT NULL,
+    meeting_date date NOT NULL,
+    meeting_time time without time zone,
+    attendees jsonb NOT NULL DEFAULT '[]'::jsonb,
+    topics_discussed text NOT NULL,
+    decisions text,
+    commitments text,
+    additional_notes text,
+    recorded_by uuid NOT NULL,
+    recorded_by_name character varying NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT project_minutes_pkey PRIMARY KEY (minute_id),
+    CONSTRAINT project_minutes_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id) ON DELETE CASCADE,
+    CONSTRAINT project_minutes_recorded_by_fkey FOREIGN KEY (recorded_by) REFERENCES public.users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.project_documents (
+    document_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    project_id uuid NOT NULL,
+    document_name character varying(255) NOT NULL,
+    document_description text,
+    storage_path character varying NOT NULL,
+    file_size integer,
+    mime_type character varying(100),
+    uploaded_by uuid NOT NULL,
+    uploaded_by_name character varying NOT NULL,
+    uploaded_at timestamp with time zone NOT NULL DEFAULT now(),
+    document_status character varying NOT NULL DEFAULT 'active'::character varying
+        CHECK (document_status::text = ANY (ARRAY['active'::character varying, 'deleted'::character varying]::text[])),
+    deleted_at timestamp with time zone,
+    deleted_by uuid,
+    CONSTRAINT project_documents_pkey PRIMARY KEY (document_id),
+    CONSTRAINT project_documents_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id) ON DELETE CASCADE,
+    CONSTRAINT project_documents_uploaded_by_fkey FOREIGN KEY (uploaded_by) REFERENCES public.users(user_id),
+    CONSTRAINT project_documents_deleted_by_fkey FOREIGN KEY (deleted_by) REFERENCES public.users(user_id)
+);
+
+-- ============================================================
 -- MÓDULO: TAREAS (continuación con dependencias)
 -- ============================================================
 
@@ -705,18 +813,20 @@ CREATE TABLE IF NOT EXISTS public.tasks (
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
     module_type character varying 
-        CHECK (module_type::text = ANY (ARRAY['procedures'::character varying, 'kpi_improvement'::character varying, 'general'::character varying, 'other'::character varying]::text[])),
+        CHECK (module_type::text = ANY (ARRAY['procedures'::character varying, 'kpi_improvement'::character varying, 'general'::character varying, 'projects'::character varying, 'other'::character varying]::text[])),
     procedure_id uuid,
     procedure_step_id uuid,
     task_progress text,
     instance_id uuid,
+    project_id uuid,
     CONSTRAINT tasks_pkey PRIMARY KEY (task_id),
     CONSTRAINT tasks_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(user_id),
     CONSTRAINT tasks_assigned_to_fkey FOREIGN KEY (assigned_to) REFERENCES public.users(user_id),
     CONSTRAINT tasks_improvement_plan_id_fkey FOREIGN KEY (improvement_plan_id) REFERENCES public.kpi_improvement_plans(plan_id),
     CONSTRAINT tasks_procedure_id_fkey FOREIGN KEY (procedure_id) REFERENCES public.procedures(procedure_id),
     CONSTRAINT tasks_procedure_step_id_fkey FOREIGN KEY (procedure_step_id) REFERENCES public.procedure_steps(step_id),
-    CONSTRAINT tasks_instance_id_fkey FOREIGN KEY (instance_id) REFERENCES public.procedure_instances(instance_id)
+    CONSTRAINT tasks_instance_id_fkey FOREIGN KEY (instance_id) REFERENCES public.procedure_instances(instance_id),
+    CONSTRAINT tasks_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.task_collaborators (
@@ -1335,6 +1445,89 @@ WHERE u.user_name = 'admin'
 AND r.role_name = 'Super Administrador'
 ON CONFLICT (user_id, role_id) DO NOTHING;
 
+-- ============================================================
+-- DATOS INICIALES: PERMISOS DEL SISTEMA
+-- ============================================================
+INSERT INTO public.permissions (permission_name, permission_description, permission_status, module_id, page_url) VALUES
+-- Módulo: config-security
+('Configuración general', 'Modificar configuración del sistema', 'active', 'config-security', '/modules/config-security/config.html'),
+('Gestión de usuarios', 'Crear, editar y eliminar usuarios del sistema', 'active', 'config-security', '/modules/config-security/users.html'),
+('Gestión de roles', 'Administrar roles y sus configuraciones', 'active', 'config-security', '/modules/config-security/roles.html'),
+('Asignar roles', 'Asignar roles a usuarios del sistema', 'active', 'config-security', '/modules/config-security/user-roles.html'),
+('Configurar permisos', 'Configurar permisos de los roles', 'active', 'config-security', '/modules/config-security/role-permissions.html'),
+('Logs de auditoría', 'Ver registros de auditoría del sistema', 'active', 'config-security', '/modules/config-security/audit-log.html'),
+('Backup y restauración', 'Gestionar respaldos y restauración de la base de datos', 'active', 'config-security', '/modules/config-security/backup.html'),
+
+-- Módulo: indicators
+('Variables', 'Gestionar variables del sistema de indicadores', 'active', 'indicators', '/modules/indicators/variables.html'),
+('Segmentaciones', 'Gestionar segmentaciones de datos', 'active', 'indicators', '/modules/indicators/segments.html'),
+('Captura de datos', 'Capturar datos de variables', 'active', 'indicators', '/modules/indicators/data-entry.html'),
+('Gestión grupos de interés', 'Permite crear, editar y administrar grupos de interés (stakeholders) de la institución', 'active', 'indicators', '/modules/indicators/stakeholder-groups.html'),
+('Indicadores', 'Gestionar indicadores del sistema', 'active', 'indicators', '/modules/indicators/indicators.html'),
+('Benchmarks', 'Gestionar benchmarks y puntos de referencia para indicadores', 'active', 'indicators', '/modules/indicators/benchmarks.html'),
+('Categorías de indicadores', 'Gestionar categorías de indicadores', 'active', 'indicators', '/modules/indicators/categories.html'),
+('Configurar mi dashboard', 'Configurar dashboard personal de indicadores', 'active', 'indicators', '/modules/indicators/dashboard-config.html'),
+('Ver mi dashboard', 'Ver dashboard personal de indicadores', 'active', 'indicators', '/modules/indicators/dashboard.html'),
+('Gestión de mejora', 'Acceso al módulo de análisis y planes de mejora de indicadores', 'active', 'indicators', '/modules/indicators/improvement.html'),
+('Tablero de Mejora', 'Acceso al tablero de control y análisis de planes de mejora continua', 'active', 'indicators', '/modules/indicators/improvement-dashboard.html'),
+('Análisis global de correlaciones', 'Realizar análisis de correlaciones entre todos los indicadores activos del sistema', 'active', 'indicators', '/modules/indicators/correlations.html'),
+
+-- Módulo: surveys
+('Gestionar escalas', 'Gestionar escalas de medición de encuestas', 'active', 'surveys', '/modules/surveys/scales.html'),
+('Crear encuestas', 'Crear y editar encuestas maestras', 'active', 'surveys', '/modules/surveys/masters.html'),
+('Ver resultados', 'Ver resultados de encuestas aplicadas', 'active', 'surveys', '/modules/surveys/results.html'),
+('Comparar aplicaciones', 'Comparar resultados entre aplicaciones', 'active', 'surveys', '/modules/surveys/comparison.html'),
+('Dashboard de encuestas', 'Ver dashboard global de encuestas', 'active', 'surveys', '/modules/surveys/dashboard.html'),
+
+-- Módulo: pqr
+('Gestionar categorías', 'Gestionar categorías de PQR', 'active', 'pqr', '/modules/pqr/categories.html'),
+('Gestionar prioridades', 'Gestionar prioridades de PQR', 'active', 'pqr', '/modules/pqr/priorities.html'),
+('Gestionar solicitudes', 'Gestionar solicitudes de PQR', 'active', 'pqr', '/modules/pqr/manage-requests.html'),
+('Responder solicitudes', 'Responder solicitudes de PQR', 'active', 'pqr', '/modules/pqr/respond-requests.html'),
+('Dashboard de PQR', 'Ver dashboard de PQR', 'active', 'pqr', '/modules/pqr/dashboard.html'),
+
+-- Módulo: procedures
+('Gestionar formularios', 'Crear, editar y configurar formularios reutilizables', 'active', 'procedures', '/modules/procedures/forms.html'),
+('Gestionar procedimientos', 'Diseñar y configurar procedimientos con pasos y bifurcaciones', 'active', 'procedures', '/modules/procedures/procedures.html'),
+('Ejecutar procedimiento', 'Iniciar una nueva instancia de procedimiento', 'active', 'procedures', '/modules/procedures/execute.html'),
+('Ejecutar formularios', 'Permite llenar formularios independientes', 'active', 'procedures', '/modules/procedures/execute-form.html'),
+('Mis solicitudes de procedimientos', 'Ver el estado de mis procedimientos iniciados', 'active', 'procedures', '/modules/procedures/my-requests.html'),
+('Consultar registros de procedimientos', 'Ver historial completo de todos los procedimientos', 'active', 'procedures', '/modules/procedures/records.html'),
+('Consultar respuestas de formularios', 'Permite ver y filtrar respuestas de formularios propios', 'active', 'procedures', '/modules/procedures/query-submissions.html'),
+('Dashboard de procedimientos', 'Ver dashboard general del módulo de procedimientos', 'active', 'procedures', '/modules/procedures/dashboard.html'),
+
+-- Módulo: training
+('Gestionar roles de formación', 'Crear, editar y eliminar roles/cargos del sistema de formación', 'active', 'training', '/modules/training/roles.html'),
+('Asociar roles a usuarios', 'Asignar y quitar roles de formación a usuarios del sistema', 'active', 'training', '/modules/training/user-roles.html'),
+('Generar rutas de formación', 'Generar rutas formativas para usuarios', 'active', 'training', '/modules/training/generate-paths.html'),
+('Gestionar ejes formativos', 'Gestionar ejes de formación', 'active', 'training', '/modules/training/axes.html'),
+('Gestionar habilidades', 'Gestionar habilidades formativas', 'active', 'training', '/modules/training/skills.html'),
+('Gestionar modalidades', 'Gestionar modalidades de formación', 'active', 'training', '/modules/training/modalities.html'),
+('Gestionar fuentes de requisición', 'Gestionar fuentes de requisición formativa', 'active', 'training', '/modules/training/requisition-sources.html'),
+('Gestionar facilitadores', 'Gestionar facilitadores de formación', 'active', 'training', '/modules/training/facilitators.html'),
+('Gestionar unidades formativas', 'Gestionar módulos de formación', 'active', 'training', '/modules/training/modules.html'),
+('Gestionar referencias de unidades', 'Gestionar referencias de unidades formativas', 'active', 'training', '/modules/training/module-references.html'),
+('Asociar facilitadores a unidades', 'Asociar facilitadores a unidades formativas', 'active', 'training', '/modules/training/module-facilitators.html'),
+('Asociar habilidades a unidades', 'Asociar habilidades a unidades formativas', 'active', 'training', '/modules/training/module-skills.html'),
+('Asociar unidades a roles', 'Asociar unidades formativas a roles', 'active', 'training', '/modules/training/module-roles.html'),
+('Gestionar fechas tentativas', 'Gestionar fechas tentativas de formación', 'active', 'training', '/modules/training/manage-deadlines.html'),
+('Registrar cumplimiento de unidades', 'Registrar cumplimiento de unidades formativas', 'active', 'training', '/modules/training/register-completion.html'),
+('Eximir cumplimiento de unidades', 'Eximir a usuarios del cumplimiento de unidades', 'active', 'training', '/modules/training/waive-modules.html'),
+('Solicitar unidades por interés', 'Solicitar unidades formativas por interés', 'active', 'training', '/modules/training/request-modules.html'),
+('Consultas de rutas', 'Realizar consultas sobre rutas formativas', 'active', 'training', '/modules/training/path-queries.html'),
+('Ver mi ruta de formación', 'Ver mi ruta formativa personal', 'active', 'training', '/modules/training/my-path.html'),
+('Ver mi dashboard de formación', 'Ver mi dashboard personal de formación', 'active', 'training', '/modules/training/my-dashboard.html'),
+('Dashboard global de formación', 'Ver dashboard global de formación', 'active', 'training', '/modules/training/dashboard.html'),
+('Reportes de formación', 'Generar reportes de formación', 'active', 'training', '/modules/training/reports.html'),
+
+-- Módulo: general-tools
+('Gestionar tareas', 'Gestionar tareas del sistema', 'active', 'general-tools', '/modules/general-tools/tasks.html'),
+('Gestionar etiquetas de tareas', 'Permite crear, editar y eliminar etiquetas para categorizar tareas', 'active', 'general-tools', '/modules/general-tools/tags.html'),
+('Dashboard de tareas', 'Ver dashboard de tareas', 'active', 'general-tools', '/modules/general-tools/dashboard.html'),
+('Proyectos', 'Acceso al listado de proyectos donde el usuario participa y opciones de gestión del proyecto', 'active', 'general-tools', '/modules/general-tools/projects.html'),
+('Dashboard proyectos', 'Acceso al dashboard ejecutivo de proyectos. Permite ver TODOS los proyectos en modo solo lectura.', 'active', 'general-tools', '/modules/general-tools/projects-dashboard.html')
+
+ON CONFLICT (permission_name) DO NOTHING;
 
 -- ============================================================
 -- FIN DE LA MIGRACIÓN INICIAL
