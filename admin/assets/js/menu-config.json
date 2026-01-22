@@ -1,0 +1,53 @@
+{
+  "menuItems": [
+    {
+      "id": "solicitudes",
+      "label": "Solicitudes",
+      "icon": "bi-ticket-detailed",
+      "url": "solicitudes.html",
+      "order": 1
+    },
+    {
+      "id": "clientes",
+      "label": "Clientes",
+      "icon": "bi-building",
+      "url": "clientes.html",
+      "order": 2
+    },
+    {
+      "id": "usuarios",
+      "label": "Usuarios",
+      "icon": "bi-people",
+      "url": "usuarios.html",
+      "order": 3
+    },
+    {
+      "id": "actualizaciones",
+      "label": "Actualizaciones",
+      "icon": "bi-megaphone",
+      "url": "actualizaciones.html",
+      "order": 4
+    },
+    {
+      "id": "migraciones",
+      "label": "Migraciones",
+      "icon": "bi-arrow-repeat",
+      "url": "migraciones.html",
+      "order": 5
+    },
+    {
+      "id": "catalogos",
+      "label": "Catálogos",
+      "icon": "bi-book",
+      "url": "catalogos.html",
+      "order": 6
+    },
+    {
+      "id": "configuracion",
+      "label": "Configuración",
+      "icon": "bi-sliders",
+      "url": "configuracion.html",
+      "order": 7
+    }
+  ]
+}
