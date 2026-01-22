@@ -1,53 +1,67 @@
 {
   "menuItems": [
     {
+      "id": "dashboard",
+      "label": "Dashboard",
+      "icon": "bi-speedometer2",
+      "url": "index.html",
+      "order": 1
+    },
+    {
       "id": "solicitudes",
       "label": "Solicitudes",
       "icon": "bi-ticket-detailed",
       "url": "solicitudes.html",
-      "order": 1
+      "order": 2
     },
     {
       "id": "clientes",
       "label": "Clientes",
       "icon": "bi-building",
       "url": "clientes.html",
-      "order": 2
+      "order": 3
     },
     {
       "id": "usuarios",
       "label": "Usuarios",
       "icon": "bi-people",
       "url": "usuarios.html",
-      "order": 3
+      "order": 4
     },
     {
       "id": "actualizaciones",
       "label": "Actualizaciones",
       "icon": "bi-megaphone",
       "url": "actualizaciones.html",
-      "order": 4
+      "order": 5
     },
     {
       "id": "migraciones",
       "label": "Migraciones",
       "icon": "bi-arrow-repeat",
       "url": "migraciones.html",
-      "order": 5
+      "order": 6
     },
     {
       "id": "catalogos",
       "label": "Catálogos",
       "icon": "bi-book",
       "url": "catalogos.html",
-      "order": 6
+      "order": 7
+    },
+    {
+      "id": "comisiones",
+      "label": "Comisiones",
+      "icon": "bi-currency-dollar",
+      "url": "comisiones.html",
+      "order": 8
     },
     {
       "id": "configuracion",
       "label": "Configuración",
       "icon": "bi-sliders",
       "url": "configuracion.html",
-      "order": 7
+      "order": 9
     }
   ]
 }
