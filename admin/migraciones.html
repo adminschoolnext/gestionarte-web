@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migraciones - GestionArte Admin</title>
+    
+    <!-- Cargar config.js -->
+    <script src="../config.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Variables CSS para colores dinámicos */
+        :root {
+            --primary-color: #1D4E4F;
+            --secondary-color: #2D8B7A;
+            --tertiary-color: #5FB09C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f5f5f5;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            border-right: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background: #f5f5f5;
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .stat-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .stat-card.success {
+            border-left-color: #28a745;
+        }
+        
+        .stat-card.info {
+            border-left-color: var(--secondary-color);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .table-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .filter-select {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-closed {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .btn-action {
+            background: none;
+            border: 1px solid #dee2e6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+                padding: 0.5rem 1rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            th, td {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><i class="bi bi-arrow-repeat"></i> <span id="site-name">GestionArte</span> - Migraciones</h1>
+        <div class="header-right">
+            <span class="user-info">Hola, <strong id="user-name">Usuario</strong></span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar">
+            <a href="index.html" class="nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="solicitudes.html" class="nav-item">
+                <i class="bi bi-ticket-detailed"></i> Solicitudes
+            </a>
+            <a href="clientes.html" class="nav-item">
+                <i class="bi bi-building"></i> Clientes
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+            <a href="actualizaciones.html" class="nav-item">
+                <i class="bi bi-megaphone"></i> Actualizaciones
+            </a>
+            <a href="migraciones.html" class="nav-item active">
+                <i class="bi bi-arrow-repeat"></i> Migraciones
+            </a>
+            <a href="configuracion.html" class="nav-item">
+                <i class="bi bi-sliders"></i> Configuración
+            </a>
+        </nav>
+
+        <main class="content">
+            <div class="content-header">
+                <h2><i class="bi bi-arrow-repeat"></i> Migraciones de Base de Datos</h2>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-secondary" onclick="loadMigrationStatus()">
+                        <i class="bi bi-arrow-clockwise"></i> Actualizar
+                    </button>
+                    <button class="btn-primary" onclick="openMigrationModal()">
+                        <i class="bi bi-play-fill"></i> Ejecutar Migraciones
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-number" id="stat-actualizados">0</div>
+                    <div class="stat-label">Actualizados</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-number" id="stat-pendientes-mig">0</div>
+                    <div class="stat-label">Con Pendientes</div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-number" id="stat-version-actual">0</div>
+                    <div class="stat-label">Versión Actual</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-total-clientes">0</div>
+                    <div class="stat-label">Total Clientes</div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Estado de Clientes</h3>
+                    <div class="table-filters">
+                        <select class="filter-select" id="filter-migration-status">
+                            <option value="">Todos</option>
+                            <option value="updated">Actualizados</option>
+                            <option value="pending">Con Pendientes</option>
+                            <option value="no-config">Sin Configurar</option>
+                        </select>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Supabase URL</th>
+                            <th>Versión Actual</th>
+                            <th>Estado</th>
+                            <th>Última Migración</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-migraciones">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Historial de Migraciones</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Versión</th>
+                            <th>Migración</th>
+                            <th>Estado</th>
+                            <th>Tiempo</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-migration-logs">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Ejecutar Migraciones -->
+    <div class="modal-overlay" id="modal-migration">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-arrow-repeat"></i> Ejecutar Migraciones</h3>
+                <button class="modal-close" onclick="closeModal('migration')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Importante:</strong> Las migraciones se ejecutarán en todos los clientes que tengan versiones pendientes.
+                </div>
+                
+                <div class="form-group">
+                    <label>Seleccionar Clientes</label>
+                    <select id="migration-target" class="filter-select" style="width: 100%; padding: 0.6rem;">
+                        <option value="all">Todos los clientes con pendientes</option>
+                        <option value="single">Un cliente específico</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="single-client-select" style="display: none;">
+                    <label>Cliente</label>
+                    <select id="migration-client-id" class="filter-select" style="width: 100%; padding: 0.6rem;">
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="migration-dry-run" checked>
+                        Modo simulación (no ejecuta cambios reales)
+                    </label>
+                </div>
+                
+                <div id="migration-results" style="display: none; margin-top: 1rem;">
+                    <h4 style="margin-bottom: 0.5rem;">Resultados:</h4>
+                    <pre id="migration-output" style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; max-height: 300px; overflow-y: auto; font-size: 0.85rem;"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('migration')">Cerrar</button>
+                <button class="btn-primary" id="btn-run-migration" onclick="runMigrations()">
+                    <i class="bi bi-play-fill"></i> Ejecutar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // VERIFICAR SESIÓN
+        // ==========================================
+        const currentUser = JSON.parse(sessionStorage.getItem('user'));
+        if (!currentUser) {
+            window.location.href = '../login.html';
+        }
+        
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let allClients = [];
+        
+        // Versión actual del esquema - INCREMENTAR con cada nueva migración
+        const CURRENT_SCHEMA_VERSION = 7;
+        
+        const MIGRATION_FILES = {
+            2: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/001_add_get_public_tables.sql',
+            3: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/002_add_notification_sender_name.sql',
+            4: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/003_add_oauth_support_users.sql',
+            5: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/004_add_oauth_support_system_config.sql',
+            6: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/005_add_form_field_conditional_logic.sql',
+            7: 'https://cdn.jsdelivr.net/gh/adminschoolnext/gestionarte-web@main/migrations/006_add_projects_module.sql',
+        };
+        
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            document.getElementById('user-name').textContent = currentUser.full_name;
+            
+            if (typeof applySiteConfig === 'function') {
+                const config = await applySiteConfig();
+                if (config.site_name) {
+                    document.getElementById('site-name').textContent = config.site_name;
+                }
+            }
+            
+            // Event listener para selector de migraciones
+            document.getElementById('migration-target')?.addEventListener('change', function() {
+                const singleClientDiv = document.getElementById('single-client-select');
+                if (this.value === 'single') {
+                    singleClientDiv.style.display = 'block';
+                } else {
+                    singleClientDiv.style.display = 'none';
+                }
+            });
+            
+            // Event listener para filtro
+            document.getElementById('filter-migration-status')?.addEventListener('change', () => renderMigrationStatus(allClients));
+            
+            // Cargar datos iniciales
+            loadMigrationStatus();
+        });
+        
+        // ==========================================
+        // FUNCIÓN SHOWTOAST
+        // ==========================================
+        function showToast(message, type = 'info') {
+            // Remover toast anterior si existe
+            const existingToast = document.querySelector('.toast-notification');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-size: 0.9rem;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 4000);
+        }
+        
+        // ==========================================
+        // ABRIR MODAL DE MIGRACIONES
+        // ==========================================
+        function openMigrationModal() {
+            // Limpiar y poblar el selector de clientes
+            const clientSelect = document.getElementById('migration-client-id');
+            clientSelect.innerHTML = '<option value="">Seleccione un cliente...</option>';
+            
+            // Filtrar clientes con pendientes
+            const pendingClients = allClients.filter(c => 
+                c.supabase_url && 
+                c.supabase_service_key && 
+                (c.schema_version || 0) > 0 && 
+                (c.schema_version || 0) < CURRENT_SCHEMA_VERSION
+            );
+            
+            pendingClients.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                const pending = CURRENT_SCHEMA_VERSION - (c.schema_version || 0);
+                option.textContent = `${c.name} (${pending} pendiente${pending > 1 ? 's' : ''})`;
+                clientSelect.appendChild(option);
+            });
+            
+            // Resetear el formulario
+            document.getElementById('migration-target').value = 'all';
+            document.getElementById('single-client-select').style.display = 'none';
+            document.getElementById('migration-results').style.display = 'none';
+            document.getElementById('migration-output').textContent = '';
+            
+            // Abrir modal
+            document.getElementById('modal-migration').classList.add('show');
+        }
+        
+        // ==========================================
+        // EJECUTAR MIGRACIONES
+        // ==========================================
+        async function runMigrations() {
+            const target = document.getElementById('migration-target').value;
+            const outputDiv = document.getElementById('migration-output');
+            const resultsDiv = document.getElementById('migration-results');
+            const btnRun = document.getElementById('btn-run-migration');
+            
+            // Deshabilitar botón
+            btnRun.disabled = true;
+            btnRun.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Ejecutando...';
+            
+            // Mostrar área de resultados
+            resultsDiv.style.display = 'block';
+            outputDiv.textContent = 'Iniciando proceso...\n\n';
+            
+            try {
+                let clientsToMigrate = [];
+                
+                if (target === 'all') {
+                    // Todos los clientes con pendientes
+                    clientsToMigrate = allClients.filter(c => 
+                        c.supabase_url && 
+                        c.supabase_service_key && 
+                        (c.schema_version || 0) > 0 && 
+                        (c.schema_version || 0) < CURRENT_SCHEMA_VERSION
+                    );
+                    
+                    if (clientsToMigrate.length === 0) {
+                        outputDiv.textContent += '✅ Todos los clientes están actualizados\n';
+                        showToast('Todos los clientes están actualizados', 'success');
+                        return;
+                    }
+                    
+                    outputDiv.textContent += `📋 Se ejecutarán migraciones en ${clientsToMigrate.length} cliente(s):\n`;
+                    clientsToMigrate.forEach(c => {
+                        const pending = CURRENT_SCHEMA_VERSION - (c.schema_version || 0);
+                        outputDiv.textContent += `   • ${c.name} (${pending} pendiente${pending > 1 ? 's' : ''})\n`;
+                    });
+                    outputDiv.textContent += '\n';
+                    
+                } else if (target === 'single') {
+                    // Un cliente específico
+                    const clientId = parseInt(document.getElementById('migration-client-id').value);
+                    
+                    if (!clientId) {
+                        outputDiv.textContent += '❌ Por favor selecciona un cliente\n';
+                        showToast('Selecciona un cliente', 'error');
+                        return;
+                    }
+                    
+                    const client = allClients.find(c => c.id === clientId);
+                    if (!client) {
+                        outputDiv.textContent += '❌ Cliente no encontrado\n';
+                        showToast('Cliente no encontrado', 'error');
+                        return;
+                    }
+                    
+                    clientsToMigrate = [client];
+                    const pending = CURRENT_SCHEMA_VERSION - (client.schema_version || 0);
+                    outputDiv.textContent += `📋 Cliente seleccionado: ${client.name}\n`;
+                    outputDiv.textContent += `   Versión actual: v${client.schema_version || 0}\n`;
+                    outputDiv.textContent += `   Versión objetivo: v${CURRENT_SCHEMA_VERSION}\n`;
+                    outputDiv.textContent += `   Migraciones pendientes: ${pending}\n\n`;
+                }
+                
+                // Confirmar antes de ejecutar
+                if (!confirm(`¿Confirmar ejecución de migraciones en ${clientsToMigrate.length} cliente(s)?`)) {
+                    outputDiv.textContent += '\n❌ Operación cancelada por el usuario\n';
+                    return;
+                }
+                
+                let successCount = 0;
+                let errorCount = 0;
+                let totalMigrations = 0;
+                
+                // Ejecutar migraciones para cada cliente
+                for (const client of clientsToMigrate) {
+                    const currentVersion = client.schema_version || 0;
+                    const migrationsToRun = CURRENT_SCHEMA_VERSION - currentVersion;
+                    
+                    outputDiv.textContent += `\n🔄 Procesando: ${client.name}\n`;
+                    outputDiv.textContent += `${'─'.repeat(60)}\n`;
+                    
+                    for (let version = currentVersion + 1; version <= CURRENT_SCHEMA_VERSION; version++) {
+                        const migrationUrl = MIGRATION_FILES[version];
+                        
+                        if (!migrationUrl) {
+                            outputDiv.textContent += `⚠️  No hay URL para migración v${version}\n`;
+                            continue;
+                        }
+                        
+                        outputDiv.textContent += `\n📦 Migración v${version}: ${migrationUrl.split('/').pop()}\n`;
+                        
+                        try {
+                            // 1. Descargar SQL
+                            outputDiv.textContent += `   └─ Descargando SQL...\n`;
+                            const sqlResponse = await fetch(migrationUrl);
+                            if (!sqlResponse.ok) {
+                                throw new Error(`HTTP ${sqlResponse.status}`);
+                            }
+                            const sqlText = await sqlResponse.text();
+                            outputDiv.textContent += `   └─ ✓ Descarga completa (${sqlText.length} bytes)\n`;
+                            
+                            // 2. Ejecutar en BD
+                            outputDiv.textContent += `   └─ Ejecutando en base de datos...\n`;
+                            const startTime = Date.now();
+                            const execResponse = await fetch(`${client.supabase_url}/rest/v1/rpc/execute_migration_sql`, {
+                                method: 'POST',
+                                headers: {
+                                    'apikey': client.supabase_service_key,
+                                    'Authorization': `Bearer ${client.supabase_service_key}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ sql_text: sqlText })
+                            });
+                            
+                            const result = await execResponse.json();
+                            const executionTime = Date.now() - startTime;
+                            
+                            if (result.success) {
+                                outputDiv.textContent += `   └─ ✓ Ejecución exitosa (${executionTime}ms)\n`;
+                                
+                                // 3. Actualizar versión
+                                await fetch(`${SUPABASE_CONFIG.url}/rest/v1/clients?id=eq.${client.id}`, {
+                                    method: 'PATCH',
+                                    headers: {
+                                        'apikey': SUPABASE_CONFIG.anonKey,
+                                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ 
+                                        schema_version: version, 
+                                        last_migration_at: new Date().toISOString() 
+                                    })
+                                });
+                                
+                                outputDiv.textContent += `   └─ ✓ Versión actualizada a v${version}\n`;
+                                
+                                // 4. Registrar en logs
+                                await fetch(`${SUPABASE_CONFIG.url}/rest/v1/migration_logs`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'apikey': SUPABASE_CONFIG.anonKey,
+                                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        client_id: client.id,
+                                        migration_version: version,
+                                        migration_name: MIGRATION_FILES[version].split('/').pop(),
+                                        status: 'success',
+                                        execution_time_ms: executionTime
+                                    })
+                                });
+                                
+                                successCount++;
+                                totalMigrations++;
+                                outputDiv.textContent += `   └─ ✓ Log registrado\n`;
+                                
+                            } else {
+                                throw new Error(result.error || 'Error desconocido en ejecución');
+                            }
+                            
+                        } catch (error) {
+                            outputDiv.textContent += `   └─ ❌ ERROR: ${error.message}\n`;
+                            
+                            // Registrar error en logs
+                            await fetch(`${SUPABASE_CONFIG.url}/rest/v1/migration_logs`, {
+                                method: 'POST',
+                                headers: {
+                                    'apikey': SUPABASE_CONFIG.anonKey,
+                                    'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    client_id: client.id,
+                                    migration_version: version,
+                                    migration_name: MIGRATION_FILES[version]?.split('/').pop() || `v${version}`,
+                                    status: 'error',
+                                    error_message: error.message
+                                })
+                            });
+                            
+                            errorCount++;
+                            totalMigrations++;
+                            
+                            // Detener migraciones para este cliente si hay error
+                            outputDiv.textContent += `\n⚠️  Deteniendo migraciones para ${client.name} debido a error\n`;
+                            break;
+                        }
+                    }
+                    
+                    outputDiv.textContent += `\n✓ Completado para ${client.name}\n`;
+                }
+                
+                // Recargar estado
+                await loadMigrationStatus();
+                
+                // Resumen final
+                outputDiv.textContent += `\n${'═'.repeat(60)}\n`;
+                outputDiv.textContent += `\n📊 RESUMEN:\n`;
+                outputDiv.textContent += `   Total de migraciones: ${totalMigrations}\n`;
+                outputDiv.textContent += `   ✅ Exitosas: ${successCount}\n`;
+                outputDiv.textContent += `   ❌ Con errores: ${errorCount}\n`;
+                
+                if (errorCount === 0) {
+                    outputDiv.textContent += `\n✅ ¡Todas las migraciones se ejecutaron exitosamente!\n`;
+                    showToast('Migraciones completadas exitosamente', 'success');
+                } else {
+                    outputDiv.textContent += `\n⚠️  Algunas migraciones fallaron. Revisa los detalles arriba.\n`;
+                    showToast(`${successCount} exitosas, ${errorCount} con errores`, 'error');
+                }
+                
+            } catch (error) {
+                outputDiv.textContent += `\n❌ ERROR GENERAL: ${error.message}\n`;
+                showToast('Error ejecutando migraciones', 'error');
+                console.error('Error:', error);
+                
+            } finally {
+                // Rehabilitar botón
+                btnRun.disabled = false;
+                btnRun.innerHTML = '<i class="bi bi-play-fill"></i> Ejecutar';
+            }
+        }
+        
+        // ==========================================
+        // EJECUTAR MIGRACIÓN PARA UN CLIENTE ESPECÍFICO
+        // ==========================================
+        async function runMigrationForClient(clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (!client) {
+                showToast('Cliente no encontrado', 'error');
+                return;
+            }
+            
+            const pending = CURRENT_SCHEMA_VERSION - (client.schema_version || 0);
+            
+            if (pending === 0) {
+                showToast('Este cliente ya está actualizado', 'info');
+                return;
+            }
+            
+            if (!confirm(`¿Ejecutar ${pending} migración${pending > 1 ? 'es' : ''} pendiente${pending > 1 ? 's' : ''} para ${client.name}?`)) {
+                return;
+            }
+            
+            // Abrir modal y configurar para este cliente
+            openMigrationModal();
+            
+            // Configurar el selector para este cliente
+            document.getElementById('migration-target').value = 'single';
+            document.getElementById('single-client-select').style.display = 'block';
+            document.getElementById('migration-client-id').value = clientId;
+            
+            // Ejecutar automáticamente
+            setTimeout(() => runMigrations(), 500);
+        }
+        
+        // ==========================================
+        // CARGAR ESTADO DE MIGRACIONES
+        // ==========================================
+        async function loadMigrationStatus() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/clients?select=*&order=name.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                const clients = await response.json();
+                allClients = clients;
+                
+                const logsResponse = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/migration_logs?select=*,clients(name)&order=executed_at.desc&limit=50`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                const logs = await logsResponse.json();
+                
+                renderMigrationStatus(clients);
+                renderMigrationLogs(logs);
+                updateMigrationStats(clients);
+            } catch (error) {
+                console.error('Error cargando migraciones:', error);
+                showToast('Error cargando migraciones', 'error');
+            }
+        }
+        
+        // ==========================================
+        // RENDERIZAR ESTADO DE CLIENTES
+        // ==========================================
+        function renderMigrationStatus(clients) {
+            const tbody = document.getElementById('table-migraciones');
+            if (!tbody) {
+                console.log('No se encontró tbody');
+                return;
+            }
+            
+            const filter = document.getElementById('filter-migration-status')?.value || '';
+            
+            let filtered = clients || [];
+            
+            if (filter === 'updated') {
+                filtered = filtered.filter(c => c.supabase_url && (c.schema_version || 0) >= CURRENT_SCHEMA_VERSION);
+            } else if (filter === 'pending') {
+                filtered = filtered.filter(c => c.supabase_url && (c.schema_version || 0) < CURRENT_SCHEMA_VERSION);
+            } else if (filter === 'no-config') {
+                filtered = filtered.filter(c => !c.supabase_url);
+            }
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="bi bi-database"></i><p>No hay clientes</p></div></td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(c => {
+                const hasConfig = c.supabase_url && c.supabase_anon_key;
+                const hasServiceKey = c.supabase_service_key;
+                const currentVersion = c.schema_version || 0;
+                const isUpdated = currentVersion >= CURRENT_SCHEMA_VERSION;
+                
+                let statusBadge;
+                if (!hasConfig) {
+                    statusBadge = '<span class="badge badge-closed">Sin Configurar</span>';
+                } else if (currentVersion === 0) {
+                    statusBadge = '<span class="badge badge-pending">Sin migración inicial</span>';
+                } else if (isUpdated) {
+                    statusBadge = '<span class="badge badge-resolved">Actualizado</span>';
+                } else {
+                    statusBadge = `<span class="badge badge-pending">${CURRENT_SCHEMA_VERSION - currentVersion} pendiente(s)</span>`;
+                }
+                
+                const serviceKeyIcon = hasServiceKey 
+                    ? '<i class="bi bi-shield-check" style="color:green" title="Service Key OK"></i>' 
+                    : '<i class="bi bi-shield-x" style="color:orange" title="Sin Service Key"></i>';
+                
+                const supabaseDisplay = c.supabase_url 
+                    ? `<code style="font-size:0.75rem">${c.supabase_url.substring(8, 35)}...</code>` 
+                    : '<em>No configurado</em>';
+                
+                const lastMigration = c.last_migration_at ? formatDate(c.last_migration_at) : '<em>Nunca</em>';
+                
+                let actions = '';
+                if (hasConfig) {
+                    actions += `<button class="btn-action" onclick="testClientConnection(${c.id})" title="Probar"><i class="bi bi-plug"></i></button>`;
+                }
+                if (hasConfig && currentVersion === 0) {
+                    actions += `<button class="btn-action" onclick="showInitialMigrationInstructions(${c.id})" title="Instrucciones" style="background:#e74c3c;color:white"><i class="bi bi-exclamation-triangle"></i></button>`;
+                }
+                if (hasConfig && currentVersion > 0 && !isUpdated) {
+                    actions += `<button class="btn-action" onclick="runMigrationForClient(${c.id})" title="Ejecutar migraciones" style="background:#28a745;color:white"><i class="bi bi-arrow-repeat"></i></button>`;
+                }
+                
+                return `<tr>
+                    <td><strong>${c.name}</strong> ${serviceKeyIcon}</td>
+                    <td>${supabaseDisplay}</td>
+                    <td><code>v${currentVersion}</code></td>
+                    <td>${statusBadge}</td>
+                    <td>${lastMigration}</td>
+                    <td>${actions}</td>
+                </tr>`;
+            }).join('');
+        }
+        
+        // ==========================================
+        // RENDERIZAR HISTORIAL DE MIGRACIONES
+        // ==========================================
+        function renderMigrationLogs(logs) {
+            const tbody = document.getElementById('table-migration-logs');
+            if (!tbody) return;
+            
+            if (!logs || logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="bi bi-clock-history"></i><p>No hay historial</p></div></td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = logs.map(log => `<tr>
+                <td>${log.clients?.name || 'N/A'}</td>
+                <td><code>v${log.migration_version}</code></td>
+                <td>${log.migration_name || '-'}</td>
+                <td><span class="badge badge-${log.status === 'success' ? 'resolved' : 'pending'}">${log.status === 'success' ? 'Éxito' : 'Error'}</span></td>
+                <td>${log.execution_time_ms ? `${log.execution_time_ms}ms` : '-'}</td>
+                <td>${formatDate(log.executed_at)}</td>
+            </tr>`).join('');
+        }
+        
+        // ==========================================
+        // ACTUALIZAR ESTADÍSTICAS
+        // ==========================================
+        function updateMigrationStats(clients) {
+            const configured = clients.filter(c => c.supabase_url);
+            const updated = configured.filter(c => (c.schema_version || 0) >= CURRENT_SCHEMA_VERSION);
+            const pending = configured.filter(c => (c.schema_version || 0) > 0 && (c.schema_version || 0) < CURRENT_SCHEMA_VERSION);
+            
+            document.getElementById('stat-actualizados').textContent = updated.length;
+            document.getElementById('stat-pendientes-mig').textContent = pending.length;
+            document.getElementById('stat-version-actual').textContent = CURRENT_SCHEMA_VERSION;
+            document.getElementById('stat-total-clientes').textContent = clients.length;
+        }
+        
+        // ==========================================
+        // PROBAR CONEXIÓN CON CLIENTE
+        // ==========================================
+        async function testClientConnection(clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            showToast(`Probando conexión con ${client.name}...`, 'info');
+            
+            try {
+                const response = await fetch(`${client.supabase_url}/rest/v1/`, {
+                    headers: {
+                        'apikey': client.supabase_anon_key,
+                        'Authorization': `Bearer ${client.supabase_anon_key}`
+                    }
+                });
+                
+                if (response.ok) {
+                    showToast(`✅ Conexión exitosa con ${client.name}`, 'success');
+                } else {
+                    showToast(`❌ Error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showToast(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // ==========================================
+        // MOSTRAR INSTRUCCIONES MIGRACIÓN INICIAL
+        // ==========================================
+        function showInitialMigrationInstructions(clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay show';
+            modal.innerHTML = `
+                <div class="modal" style="max-width:700px">
+                    <div class="modal-header">
+                        <h3><i class="bi bi-exclamation-triangle" style="color:#ffc107"></i> Migración Inicial</h3>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>${client.name}</strong> necesita la migración inicial (v0 → v1)</p>
+                        <p style="margin-top:1rem">Esta migración <strong>debe ejecutarse manualmente</strong> en el SQL Editor de Supabase.</p>
+                        <h4 style="margin-top:1.5rem">Pasos:</h4>
+                        <ol style="margin-left:1.5rem;line-height:2">
+                            <li>Ve al <strong>SQL Editor</strong> de Supabase del cliente</li>
+                            <li>Copia el contenido de <code>migrations/000_initial_setup.sql</code></li>
+                            <li>Pégalo y ejecuta con <strong>Run</strong></li>
+                            <li>Vuelve aquí y marca como completado</li>
+                        </ol>
+                        <div style="background:#f8f9fa;padding:1rem;border-radius:8px;margin-top:1rem">
+                            <strong>URL:</strong> <a href="${client.supabase_url}" target="_blank">${client.supabase_url}</a>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cerrar</button>
+                        <button class="btn-primary" onclick="markInitialMigrationComplete(${client.id}); this.closest('.modal-overlay').remove();">
+                            <i class="bi bi-check-lg"></i> Ya ejecuté la migración
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // ==========================================
+        // MARCAR MIGRACIÓN INICIAL COMO COMPLETADA
+        // ==========================================
+        async function markInitialMigrationComplete(clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            try {
+                // Verificar que existe la función
+                const testResponse = await fetch(`${client.supabase_url}/rest/v1/rpc/execute_migration_sql`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': client.supabase_service_key || client.supabase_anon_key,
+                        'Authorization': `Bearer ${client.supabase_service_key || client.supabase_anon_key}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sql_text: 'SELECT 1' })
+                });
+                
+                if (!testResponse.ok) {
+                    const errorText = await testResponse.text();
+                    if (errorText.includes('execute_migration_sql') || errorText.includes('does not exist')) {
+                        showToast('❌ La función no existe. Ejecuta la migración 000 primero.', 'error');
+                        return;
+                    }
+                }
+                
+                // Actualizar versión
+                await fetch(`${SUPABASE_CONFIG.url}/rest/v1/clients?id=eq.${clientId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ schema_version: 1, last_migration_at: new Date().toISOString() })
+                });
+                
+                // Registrar log
+                await fetch(`${SUPABASE_CONFIG.url}/rest/v1/migration_logs`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        client_id: clientId,
+                        migration_version: 1,
+                        migration_name: '000_initial_setup.sql (manual)',
+                        status: 'success'
+                    })
+                });
+                
+                showToast(`✅ ${client.name} actualizado a v1`, 'success');
+                loadMigrationStatus();
+            } catch (error) {
+                showToast(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // ==========================================
+        // UTILIDADES GENERALES
+        // ==========================================
+        function closeModal(type) {
+            document.getElementById(`modal-${type}`).classList.remove('show');
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('es-CO', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('user');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+</body>
+</html>
