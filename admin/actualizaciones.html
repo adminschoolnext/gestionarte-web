@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizaciones - Admin</title>
+
+    <!-- Cargar config.js -->
+    <script src="../config.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
+    <style>
+        /* Variables CSS para colores dinámicos */
+        :root {
+            --primary-color: #1D4E4F;
+            --secondary-color: #2D8B7A;
+            --tertiary-color: #5FB09C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background: #fff;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .table-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .filter-select {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .badge-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .btn-action {
+            background: none;
+            border: 1px solid #dee2e6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        /* Quill Editor Styles */
+        .quill-container {
+            background: white;
+            border-radius: 6px;
+        }
+        
+        #update-detail-editor {
+            min-height: 200px;
+            border: 1px solid #dee2e6;
+            border-radius: 0 0 6px 6px;
+        }
+        
+        .ql-toolbar {
+            border-radius: 6px 6px 0 0;
+            border: 1px solid #dee2e6;
+            background: #f8f9fa;
+        }
+        
+        .ql-editor {
+            min-height: 200px;
+            font-size: 0.95rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .ql-editor.ql-blank::before {
+            color: #8A9A9A;
+            font-style: normal;
+        }
+        
+        .ql-snow .ql-picker {
+            font-size: 0.9rem;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: 1px solid #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            border-color: #c82333;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        footer p {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+                padding: 0.5rem 1rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            th, td {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+            
+            .table-filters {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><i class="bi bi-gear-fill"></i> <span id="site-name">GestionArte</span> - Admin</h1>
+        <div class="header-right">
+            <span class="user-info">Hola, <strong id="user-name">Usuario</strong></span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar">
+            <a href="index.html" class="nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="solicitudes.html" class="nav-item">
+                <i class="bi bi-ticket-detailed"></i> Solicitudes
+            </a>
+            <a href="clientes.html" class="nav-item">
+                <i class="bi bi-building"></i> Clientes
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+            <a href="actualizaciones.html" class="nav-item active">
+                <i class="bi bi-megaphone"></i> Actualizaciones
+            </a>
+            <a href="migraciones.html" class="nav-item">
+                <i class="bi bi-arrow-repeat"></i> Migraciones
+            </a>
+            <a href="catalogos.html" class="nav-item">
+                <i class="bi bi-book"></i> Catálogos
+            </a>
+            <a href="comisiones.html" class="nav-item">
+                <i class="bi bi-cash-coin"></i> Comisiones
+            </a>
+            <a href="configuracion.html" class="nav-item">
+                <i class="bi bi-sliders"></i> Configuración
+            </a>
+        </nav>
+
+        <main class="content">
+            <div class="content-header">
+                <h2><i class="bi bi-megaphone"></i> Actualizaciones del Sistema</h2>
+                <button class="btn-primary" onclick="openModal('update')">
+                    <i class="bi bi-plus-lg"></i> Nueva Actualización
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Listado de Actualizaciones</h3>
+                    <div class="table-filters">
+                        <select class="filter-select" id="filter-module">
+                            <option value="">Todos los módulos</option>
+                        </select>
+                        <select class="filter-select" id="filter-published">
+                            <option value="">Todos</option>
+                            <option value="true">Publicados</option>
+                            <option value="false">Borradores</option>
+                        </select>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Módulo</th>
+                            <th>Funcionalidad</th>
+                            <th>Versión</th>
+                            <th>Detalle</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-actualizaciones">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 <span id="footer-name">GestionArte</span></p>
+    </footer>
+
+    <!-- Modal Actualización -->
+    <div class="modal-overlay" id="modal-update">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-megaphone"></i> <span id="modal-update-title">Nueva Actualización</span></h3>
+                <button class="modal-close" onclick="closeModal('update')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="update-id">
+                
+                <div class="form-group">
+                    <label>Módulo *</label>
+                    <select id="update-module">
+                        <option value="">Seleccione un módulo</option>
+                        <option value="Indicadores">Indicadores</option>
+                        <option value="Encuestas">Encuestas</option>
+                        <option value="PQR">PQR</option>
+                        <option value="Formación">Formación</option>
+                        <option value="Tareas">Tareas</option>
+                        <option value="Procedimientos">Procedimientos</option>
+                        <option value="Proyectos">Proyectos</option>
+                        <option value="Configuración">Configuración</option>
+                        <option value="Seguridad">Seguridad</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Funcionalidad *</label>
+                    <input type="text" id="update-feature" placeholder="Ej: Dashboard de indicadores">
+                </div>
+                
+                <div class="form-group">
+                    <label>Versión *</label>
+                    <input type="text" id="update-version" placeholder="Ej: 1.0.0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Detalle *</label>
+                    <div class="quill-container">
+                        <div id="update-detail-editor"></div>
+                    </div>
+                    <input type="hidden" id="update-detail">
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="update-published" checked> Publicar inmediatamente
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('update')">Cancelar</button>
+                <button class="btn-primary" onclick="saveUpdate()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // VERIFICAR SESIÓN
+        // ==========================================
+        const currentUser = JSON.parse(sessionStorage.getItem('user'));
+        if (!currentUser) {
+            window.location.href = '../login.html';
+        }
+        
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let allUpdates = [];
+        let quillEditor = null;
+        
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            document.getElementById('user-name').textContent = currentUser.full_name;
+            
+            if (typeof applySiteConfig === 'function') {
+                const config = await applySiteConfig();
+                if (config.site_name) {
+                    document.getElementById('site-name').textContent = config.site_name;
+                    document.getElementById('footer-name').textContent = config.site_name;
+                    document.title = `Actualizaciones - ${config.site_name} Admin`;
+                }
+            }
+            
+            // Inicializar Quill Editor
+            quillEditor = new Quill('#update-detail-editor', {
+                theme: 'snow',
+                placeholder: 'Descripción detallada de la actualización...\n\nPuedes usar:\n• Negritas, cursivas\n• Listas con viñetas\n• Títulos y subtítulos',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+            
+            // Cargar datos iniciales
+            loadUpdates();
+            
+            // Event listeners para filtros
+            document.getElementById('filter-module').addEventListener('change', filterUpdates);
+            document.getElementById('filter-published').addEventListener('change', filterUpdates);
+        });
+        
+        // ==========================================
+        // CARGAR ACTUALIZACIONES
+        // ==========================================
+        async function loadUpdates() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/updates?select=*&order=published_at.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allUpdates = await response.json();
+                renderUpdates(allUpdates);
+                populateModuleFilter();
+            } catch (error) {
+                console.error('Error cargando actualizaciones:', error);
+            }
+        }
+        
+        function renderUpdates(updates) {
+            const tbody = document.getElementById('table-actualizaciones');
+            
+            if (updates.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-megaphone"></i>
+                                <p>No hay actualizaciones registradas</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = updates.map(u => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = u.detail;
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                
+                return `
+                <tr>
+                    <td><strong>${u.module}</strong></td>
+                    <td>${u.feature}</td>
+                    <td><code style="background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px;">${u.version}</code></td>
+                    <td>${plainText.substring(0, 60)}${plainText.length > 60 ? '...' : ''}</td>
+                    <td><span class="badge ${u.is_published ? 'badge-resolved' : 'badge-pending'}">${u.is_published ? 'Publicado' : 'Borrador'}</span></td>
+                    <td>${formatDate(u.published_at)}</td>
+                    <td>
+                        <button class="btn-action" onclick="editUpdate(${u.id})" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action" onclick="toggleUpdateStatus(${u.id}, ${u.is_published})" title="${u.is_published ? 'Despublicar' : 'Publicar'}">
+                            <i class="bi bi-${u.is_published ? 'eye-slash' : 'eye'}"></i>
+                        </button>
+                        <button class="btn-action btn-danger" onclick="deleteUpdate(${u.id})" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+        
+        function populateModuleFilter() {
+            const modules = [...new Set(allUpdates.map(u => u.module))];
+            const select = document.getElementById('filter-module');
+            select.innerHTML = '<option value="">Todos los módulos</option>' + 
+                modules.map(m => `<option value="${m}">${m}</option>`).join('');
+        }
+        
+        function filterUpdates() {
+            const moduleFilter = document.getElementById('filter-module').value;
+            const publishedFilter = document.getElementById('filter-published').value;
+            
+            let filtered = allUpdates;
+            
+            if (moduleFilter) {
+                filtered = filtered.filter(u => u.module === moduleFilter);
+            }
+            if (publishedFilter !== '') {
+                filtered = filtered.filter(u => u.is_published === (publishedFilter === 'true'));
+            }
+            
+            renderUpdates(filtered);
+        }
+        
+        // ==========================================
+        // MODAL
+        // ==========================================
+        function openModal(type, editId = null) {
+            if (!editId) {
+                document.getElementById('modal-update-title').textContent = 'Nueva Actualización';
+                document.getElementById('update-id').value = '';
+                document.getElementById('update-module').value = '';
+                document.getElementById('update-feature').value = '';
+                document.getElementById('update-version').value = '';
+                document.getElementById('update-published').checked = true;
+                
+                if (quillEditor) {
+                    quillEditor.setContents([]);
+                }
+            }
+            
+            document.getElementById(`modal-${type}`).classList.add('show');
+        }
+        
+        function closeModal(type) {
+            document.getElementById(`modal-${type}`).classList.remove('show');
+        }
+        
+        async function editUpdate(id) {
+            const update = allUpdates.find(u => u.id === id);
+            if (!update) return;
+            
+            openModal('update', id);
+            
+            document.getElementById('modal-update-title').textContent = 'Editar Actualización';
+            document.getElementById('update-id').value = id;
+            document.getElementById('update-module').value = update.module;
+            document.getElementById('update-feature').value = update.feature;
+            document.getElementById('update-version').value = update.version;
+            document.getElementById('update-published').checked = update.is_published;
+            
+            if (quillEditor) {
+                quillEditor.root.innerHTML = update.detail || '';
+            }
+        }
+        
+        async function saveUpdate() {
+            const id = document.getElementById('update-id').value;
+            const isPublished = document.getElementById('update-published').checked;
+            
+            const detailHTML = quillEditor.root.innerHTML;
+            
+            const data = {
+                module: document.getElementById('update-module').value,
+                feature: document.getElementById('update-feature').value,
+                version: document.getElementById('update-version').value,
+                detail: detailHTML,
+                is_published: isPublished,
+                updated_at: new Date().toISOString()
+            };
+            
+            if (!data.module || !data.feature || !data.version || !detailHTML || detailHTML === '<p><br></p>') {
+                alert('Todos los campos son requeridos');
+                return;
+            }
+            
+            if (!id && isPublished) {
+                data.published_at = new Date().toISOString();
+            }
+            
+            if (id && isPublished) {
+                const existing = allUpdates.find(u => u.id === parseInt(id));
+                if (existing && !existing.is_published) {
+                    data.published_at = new Date().toISOString();
+                }
+            }
+            
+            try {
+                const url = id 
+                    ? `${SUPABASE_CONFIG.url}/rest/v1/updates?id=eq.${id}`
+                    : `${SUPABASE_CONFIG.url}/rest/v1/updates`;
+                
+                await fetch(url, {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                closeModal('update');
+                loadUpdates();
+            } catch (error) {
+                console.error('Error guardando actualización:', error);
+                alert('Error al guardar la actualización');
+            }
+        }
+        
+        async function toggleUpdateStatus(id, currentStatus) {
+            try {
+                const data = { 
+                    is_published: !currentStatus,
+                    updated_at: new Date().toISOString()
+                };
+                
+                if (!currentStatus) {
+                    data.published_at = new Date().toISOString();
+                }
+                
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/updates?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }
+                );
+                loadUpdates();
+            } catch (error) {
+                console.error('Error cambiando estado:', error);
+            }
+        }
+        
+        async function deleteUpdate(id) {
+            if (!confirm('¿Está seguro de eliminar esta actualización?')) return;
+            
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/updates?id=eq.${id}`,
+                    {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                loadUpdates();
+            } catch (error) {
+                console.error('Error eliminando actualización:', error);
+            }
+        }
+        
+        // ==========================================
+        // UTILIDADES
+        // ==========================================
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('es-CO', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('user');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+</body>
+</html>
