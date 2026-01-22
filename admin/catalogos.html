@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogos - GestionArte Admin</title>
+    
+    <!-- Cargar config.js -->
+    <script src="../config.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Variables CSS para colores dinámicos */
+        :root {
+            --primary-color: #1D4E4F;
+            --secondary-color: #2D8B7A;
+            --tertiary-color: #5FB09C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: white;
+            border-right: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .content-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            background: #f8f9fa;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .tab:hover {
+            background: rgba(29, 78, 79, 0.05);
+            color: var(--primary-color);
+        }
+        
+        .tab.active {
+            background: white;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            margin-bottom: -2px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Table Container */
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .table-header h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-inactive {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .btn-action {
+            background: none;
+            border: 1px solid #dee2e6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        footer p {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+                padding: 0.5rem 1rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1 1 50%;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><i class="bi bi-book"></i> <span id="site-name">GestionArte</span> - Admin</h1>
+        <div class="header-right">
+            <span class="user-info">Hola, <strong id="user-name">Usuario</strong></span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar">
+            <a href="index.html" class="nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="solicitudes.html" class="nav-item">
+                <i class="bi bi-ticket-detailed"></i> Solicitudes
+            </a>
+            <a href="clientes.html" class="nav-item">
+                <i class="bi bi-building"></i> Clientes
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+            <a href="actualizaciones.html" class="nav-item">
+                <i class="bi bi-megaphone"></i> Actualizaciones
+            </a>
+            <a href="migraciones.html" class="nav-item">
+                <i class="bi bi-arrow-repeat"></i> Migraciones
+            </a>
+            <a href="catalogos.html" class="nav-item active">
+                <i class="bi bi-book"></i> Catálogos
+            </a>
+            <a href="comisiones.html" class="nav-item">
+                <i class="bi bi-cash-coin"></i> Comisiones
+            </a>
+            <a href="configuracion.html" class="nav-item">
+                <i class="bi bi-sliders"></i> Configuración
+            </a>
+        </nav>
+
+        <main class="content">
+            <div class="content-header">
+                <h2><i class="bi bi-book"></i> Catálogos del Sistema</h2>
+            </div>
+            
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('paises')">
+                        <i class="bi bi-globe"></i> Países
+                    </button>
+                    <button class="tab" onclick="switchTab('tipos')">
+                        <i class="bi bi-tag"></i> Tipos de Cliente
+                    </button>
+                    <button class="tab" onclick="switchTab('alianzas')">
+                        <i class="bi bi-handshake"></i> Alianzas
+                    </button>
+                    <button class="tab" onclick="switchTab('canales')">
+                        <i class="bi bi-diagram-3"></i> Canales de Venta
+                    </button>
+                </div>
+                
+                <!-- Tab Países -->
+                <div id="tab-paises" class="tab-content active">
+                    <div class="table-header">
+                        <h3><i class="bi bi-globe"></i> Países</h3>
+                        <button class="btn-primary" onclick="openModal('country')">
+                            <i class="bi bi-plus-lg"></i> Nuevo País
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>País</th>
+                                <th>Emoji</th>
+                                <th>Moneda</th>
+                                <th>Precio Anual (USD)</th>
+                                <th>Banda</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-paises">
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <i class="bi bi-inbox"></i>
+                                        <p>Cargando países...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Tab Tipos de Cliente -->
+                <div id="tab-tipos" class="tab-content">
+                    <div class="table-header">
+                        <h3><i class="bi bi-tag"></i> Tipos de Cliente</h3>
+                        <button class="btn-primary" onclick="openModal('type')">
+                            <i class="bi bi-plus-lg"></i> Nuevo Tipo
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Icono</th>
+                                <th>Orden</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-tipos">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="bi bi-inbox"></i>
+                                        <p>Cargando tipos...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Tab Alianzas -->
+                <div id="tab-alianzas" class="tab-content">
+                    <div class="table-header">
+                        <h3><i class="bi bi-handshake"></i> Alianzas Estratégicas</h3>
+                        <button class="btn-primary" onclick="openModal('alliance')">
+                            <i class="bi bi-plus-lg"></i> Nueva Alianza
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Contacto</th>
+                                <th>Descuento</th>
+                                <th>Vigencia</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-alianzas">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="bi bi-inbox"></i>
+                                        <p>Cargando alianzas...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Tab Canales de Venta -->
+                <div id="tab-canales" class="tab-content">
+                    <div class="table-header">
+                        <h3><i class="bi bi-diagram-3"></i> Canales de Venta</h3>
+                        <button class="btn-primary" onclick="openModal('channel')">
+                            <i class="bi bi-plus-lg"></i> Nuevo Canal
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Contacto</th>
+                                <th>Comisión</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-canales">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="bi bi-inbox"></i>
+                                        <p>Cargando canales...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 <span id="footer-name">GestionArte</span></p>
+    </footer>
+
+    <!-- Modal País -->
+    <div class="modal-overlay" id="modal-country">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-globe"></i> <span id="modal-country-title">Nuevo País</span></h3>
+                <button class="modal-close" onclick="closeModal('country')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="country-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Código *</label>
+                        <input type="text" id="country-code" placeholder="CO" maxlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Emoji Bandera</label>
+                        <input type="text" id="country-flag" placeholder="🇨🇴">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del País *</label>
+                    <input type="text" id="country-name" placeholder="Colombia">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Código de Moneda</label>
+                        <input type="text" id="country-currency" placeholder="USD" value="USD">
+                    </div>
+                    <div class="form-group">
+                        <label>Precio Anual (USD) *</label>
+                        <input type="number" id="country-price" placeholder="230" step="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Banda de Precio</label>
+                    <select id="country-band">
+                        <option value="">Sin banda</option>
+                        <option value="indigo">Índigo (económico)</option>
+                        <option value="naranja">Naranja (medio-bajo)</option>
+                        <option value="verde">Verde (medio)</option>
+                        <option value="azul">Azul (premium)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('country')">Cancelar</button>
+                <button class="btn-primary" onclick="saveCountry()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tipo de Cliente -->
+    <div class="modal-overlay" id="modal-type">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-tag"></i> <span id="modal-type-title">Nuevo Tipo</span></h3>
+                <button class="modal-close" onclick="closeModal('type')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="type-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Código *</label>
+                        <input type="text" id="type-code" placeholder="EDU">
+                    </div>
+                    <div class="form-group">
+                        <label>Icono</label>
+                        <input type="text" id="type-icon" placeholder="🎓">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" id="type-name" placeholder="Educación">
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="type-description" rows="3" placeholder="Instituciones educativas..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Orden de Visualización</label>
+                    <input type="number" id="type-order" placeholder="0" value="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('type')">Cancelar</button>
+                <button class="btn-primary" onclick="saveType()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Alianza -->
+    <div class="modal-overlay" id="modal-alliance">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-handshake"></i> <span id="modal-alliance-title">Nueva Alianza</span></h3>
+                <button class="modal-close" onclick="closeModal('alliance')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="alliance-id">
+                <div class="form-group">
+                    <label>Código *</label>
+                    <input type="text" id="alliance-code" placeholder="CCB">
+                </div>
+                <div class="form-group">
+                    <label>Nombre de la Alianza *</label>
+                    <input type="text" id="alliance-name" placeholder="Cámara de Comercio de Bogotá">
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="alliance-description" rows="2" placeholder="Acuerdo con la CCB..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre de Contacto</label>
+                        <input type="text" id="alliance-contact-name" placeholder="Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label>Email de Contacto</label>
+                        <input type="email" id="alliance-contact-email" placeholder="contacto@ccb.org">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono de Contacto</label>
+                    <input type="tel" id="alliance-contact-phone" placeholder="+57 300 1234567">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Descuento (%) *</label>
+                        <input type="number" id="alliance-discount" placeholder="15" step="0.01" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Máx. Clientes</label>
+                        <input type="number" id="alliance-max-clients" placeholder="Dejar vacío para ilimitado">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Válido Desde</label>
+                        <input type="date" id="alliance-valid-from">
+                    </div>
+                    <div class="form-group">
+                        <label>Válido Hasta</label>
+                        <input type="date" id="alliance-valid-until">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notas</label>
+                    <textarea id="alliance-notes" rows="2" placeholder="Notas internas..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('alliance')">Cancelar</button>
+                <button class="btn-primary" onclick="saveAlliance()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Canal de Venta -->
+    <div class="modal-overlay" id="modal-channel">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-diagram-3"></i> <span id="modal-channel-title">Nuevo Canal</span></h3>
+                <button class="modal-close" onclick="closeModal('channel')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="channel-id">
+                <div class="form-group">
+                    <label>Código *</label>
+                    <input type="text" id="channel-code" placeholder="DIRECT">
+                </div>
+                <div class="form-group">
+                    <label>Nombre del Canal *</label>
+                    <input type="text" id="channel-name" placeholder="Ventas Directas">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Canal *</label>
+                    <select id="channel-type">
+                        <option value="">Seleccione...</option>
+                        <option value="direct">Directo</option>
+                        <option value="partner">Partner</option>
+                        <option value="reseller">Reseller</option>
+                        <option value="affiliate">Afiliado</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre de Contacto</label>
+                        <input type="text" id="channel-contact-name" placeholder="María López">
+                    </div>
+                    <div class="form-group">
+                        <label>Email de Contacto</label>
+                        <input type="email" id="channel-contact-email" placeholder="ventas@empresa.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono de Contacto</label>
+                    <input type="tel" id="channel-contact-phone" placeholder="+57 300 1234567">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Comisión (%) *</label>
+                        <input type="number" id="channel-commission" placeholder="10" step="0.01" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label style="margin-top: 1.8rem;">
+                            <input type="checkbox" id="channel-commission-renewal" checked> Comisión en renovaciones
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Método de Pago</label>
+                    <input type="text" id="channel-payment-method" placeholder="Transferencia bancaria">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Banco</label>
+                        <input type="text" id="channel-bank-name" placeholder="Banco de Bogotá">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Cuenta</label>
+                        <select id="channel-account-type">
+                            <option value="">Seleccione...</option>
+                            <option value="ahorros">Ahorros</option>
+                            <option value="corriente">Corriente</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Número de Cuenta</label>
+                        <input type="text" id="channel-account-number" placeholder="1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Titular de Cuenta</label>
+                        <input type="text" id="channel-account-holder" placeholder="María López">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>NIT/RUT/Tax ID</label>
+                    <input type="text" id="channel-tax-id" placeholder="900123456-7">
+                </div>
+                <div class="form-group">
+                    <label>Notas</label>
+                    <textarea id="channel-notes" rows="2" placeholder="Notas internas..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('channel')">Cancelar</button>
+                <button class="btn-primary" onclick="saveChannel()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // VERIFICAR SESIÓN
+        // ==========================================
+        const currentUser = JSON.parse(sessionStorage.getItem('user'));
+        if (!currentUser) {
+            window.location.href = '../login.html';
+        }
+        
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let allCountries = [];
+        let allTypes = [];
+        let allAlliances = [];
+        let allChannels = [];
+        let currentTab = 'paises';
+        
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            document.getElementById('user-name').textContent = currentUser.full_name;
+            
+            if (typeof applySiteConfig === 'function') {
+                const config = await applySiteConfig();
+                if (config.site_name) {
+                    document.getElementById('site-name').textContent = config.site_name;
+                    document.getElementById('footer-name').textContent = config.site_name;
+                }
+            }
+            
+            // Cargar todos los catálogos
+            await loadAllCatalogs();
+        });
+        
+        // ==========================================
+        // TABS
+        // ==========================================
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Actualizar tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            // Actualizar contenido
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+        
+        // ==========================================
+        // CARGAR TODOS LOS CATÁLOGOS
+        // ==========================================
+        async function loadAllCatalogs() {
+            await Promise.all([
+                loadCountries(),
+                loadTypes(),
+                loadAlliances(),
+                loadChannels()
+            ]);
+        }
+        
+        // ==========================================
+        // PAÍSES
+        // ==========================================
+        async function loadCountries() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/countries?select=*&order=name.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allCountries = await response.json();
+                renderCountries();
+            } catch (error) {
+                console.error('Error cargando países:', error);
+            }
+        }
+        
+        function renderCountries() {
+            const tbody = document.getElementById('table-paises');
+            
+            if (allCountries.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <p>No hay países registrados</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = allCountries.map(c => `
+                <tr>
+                    <td><strong>${c.code}</strong></td>
+                    <td>${c.name}</td>
+                    <td style="font-size: 1.5rem;">${c.flag_emoji || ''}</td>
+                    <td>${c.currency_code}</td>
+                    <td><strong>$${c.annual_price_usd}</strong></td>
+                    <td>${c.price_band ? `<span class="badge" style="background: ${getBandColor(c.price_band)}; color: white;">${c.price_band}</span>` : '-'}</td>
+                    <td><span class="badge badge-${c.is_active ? 'active' : 'inactive'}">${c.is_active ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn-action" onclick="editCountry(${c.id})" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action" onclick="toggleCountryStatus(${c.id}, ${c.is_active})" title="${c.is_active ? 'Desactivar' : 'Activar'}">
+                            <i class="bi bi-${c.is_active ? 'pause' : 'play'}"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function getBandColor(band) {
+            const colors = {
+                'indigo': '#6366f1',
+                'naranja': '#fb923c',
+                'verde': '#2D8B7A',
+                'azul': '#3b82f6'
+            };
+            return colors[band] || '#6c757d';
+        }
+        
+        function editCountry(id) {
+            const country = allCountries.find(c => c.id === id);
+            if (!country) return;
+            
+            document.getElementById('modal-country-title').textContent = 'Editar País';
+            document.getElementById('country-id').value = id;
+            document.getElementById('country-code').value = country.code;
+            document.getElementById('country-name').value = country.name;
+            document.getElementById('country-flag').value = country.flag_emoji || '';
+            document.getElementById('country-currency').value = country.currency_code;
+            document.getElementById('country-price').value = country.annual_price_usd;
+            document.getElementById('country-band').value = country.price_band || '';
+            
+            openModal('country');
+        }
+        
+        async function saveCountry() {
+            const id = document.getElementById('country-id').value;
+            const data = {
+                code: document.getElementById('country-code').value.toUpperCase(),
+                name: document.getElementById('country-name').value,
+                flag_emoji: document.getElementById('country-flag').value || null,
+                currency_code: document.getElementById('country-currency').value || 'USD',
+                annual_price_usd: parseFloat(document.getElementById('country-price').value),
+                price_band: document.getElementById('country-band').value || null,
+                is_active: true,
+                updated_at: new Date().toISOString()
+            };
+            
+            if (!data.code || !data.name || !data.annual_price_usd) {
+                alert('Complete los campos requeridos (*)');
+                return;
+            }
+            
+            try {
+                const url = id 
+                    ? `${SUPABASE_CONFIG.url}/rest/v1/countries?id=eq.${id}`
+                    : `${SUPABASE_CONFIG.url}/rest/v1/countries`;
+                
+                await fetch(url, {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                closeModal('country');
+                loadCountries();
+            } catch (error) {
+                console.error('Error guardando país:', error);
+                alert('Error al guardar el país');
+            }
+        }
+        
+        async function toggleCountryStatus(id, currentStatus) {
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/countries?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ is_active: !currentStatus })
+                    }
+                );
+                loadCountries();
+            } catch (error) {
+                console.error('Error cambiando estado:', error);
+            }
+        }
+        
+        // ==========================================
+        // TIPOS DE CLIENTE
+        // ==========================================
+        async function loadTypes() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/client_types?select=*&order=display_order.asc,name.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allTypes = await response.json();
+                renderTypes();
+            } catch (error) {
+                console.error('Error cargando tipos:', error);
+            }
+        }
+        
+        function renderTypes() {
+            const tbody = document.getElementById('table-tipos');
+            
+            if (allTypes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <p>No hay tipos registrados</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = allTypes.map(t => `
+                <tr>
+                    <td><strong>${t.code}</strong></td>
+                    <td>${t.name}</td>
+                    <td>${t.description || '-'}</td>
+                    <td style="font-size: 1.5rem;">${t.icon || ''}</td>
+                    <td>${t.display_order}</td>
+                    <td><span class="badge badge-${t.is_active ? 'active' : 'inactive'}">${t.is_active ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn-action" onclick="editType(${t.id})" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action" onclick="toggleTypeStatus(${t.id}, ${t.is_active})" title="${t.is_active ? 'Desactivar' : 'Activar'}">
+                            <i class="bi bi-${t.is_active ? 'pause' : 'play'}"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function editType(id) {
+            const type = allTypes.find(t => t.id === id);
+            if (!type) return;
+            
+            document.getElementById('modal-type-title').textContent = 'Editar Tipo';
+            document.getElementById('type-id').value = id;
+            document.getElementById('type-code').value = type.code;
+            document.getElementById('type-name').value = type.name;
+            document.getElementById('type-description').value = type.description || '';
+            document.getElementById('type-icon').value = type.icon || '';
+            document.getElementById('type-order').value = type.display_order;
+            
+            openModal('type');
+        }
+        
+        async function saveType() {
+            const id = document.getElementById('type-id').value;
+            const data = {
+                code: document.getElementById('type-code').value.toUpperCase(),
+                name: document.getElementById('type-name').value,
+                description: document.getElementById('type-description').value || null,
+                icon: document.getElementById('type-icon').value || null,
+                display_order: parseInt(document.getElementById('type-order').value) || 0,
+                is_active: true,
+                updated_at: new Date().toISOString()
+            };
+            
+            if (!data.code || !data.name) {
+                alert('Complete los campos requeridos (*)');
+                return;
+            }
+            
+            try {
+                const url = id 
+                    ? `${SUPABASE_CONFIG.url}/rest/v1/client_types?id=eq.${id}`
+                    : `${SUPABASE_CONFIG.url}/rest/v1/client_types`;
+                
+                await fetch(url, {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                closeModal('type');
+                loadTypes();
+            } catch (error) {
+                console.error('Error guardando tipo:', error);
+                alert('Error al guardar el tipo');
+            }
+        }
+        
+        async function toggleTypeStatus(id, currentStatus) {
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/client_types?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ is_active: !currentStatus })
+                    }
+                );
+                loadTypes();
+            } catch (error) {
+                console.error('Error cambiando estado:', error);
+            }
+        }
+        
+        // ==========================================
+        // ALIANZAS
+        // ==========================================
+        async function loadAlliances() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/alliances?select=*&order=name.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allAlliances = await response.json();
+                renderAlliances();
+            } catch (error) {
+                console.error('Error cargando alianzas:', error);
+            }
+        }
+        
+        function renderAlliances() {
+            const tbody = document.getElementById('table-alianzas');
+            
+            if (allAlliances.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <p>No hay alianzas registradas</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = allAlliances.map(a => `
+                <tr>
+                    <td><strong>${a.code}</strong></td>
+                    <td>${a.name}</td>
+                    <td>${a.contact_name || '-'}<br><small>${a.contact_email || ''}</small></td>
+                    <td><strong>${a.discount_percentage}%</strong></td>
+                    <td>${formatDateRange(a.valid_from, a.valid_until)}</td>
+                    <td><span class="badge badge-${a.is_active ? 'active' : 'inactive'}">${a.is_active ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn-action" onclick="editAlliance(${a.id})" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action" onclick="toggleAllianceStatus(${a.id}, ${a.is_active})" title="${a.is_active ? 'Desactivar' : 'Activar'}">
+                            <i class="bi bi-${a.is_active ? 'pause' : 'play'}"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function editAlliance(id) {
+            const alliance = allAlliances.find(a => a.id === id);
+            if (!alliance) return;
+            
+            document.getElementById('modal-alliance-title').textContent = 'Editar Alianza';
+            document.getElementById('alliance-id').value = id;
+            document.getElementById('alliance-code').value = alliance.code;
+            document.getElementById('alliance-name').value = alliance.name;
+            document.getElementById('alliance-description').value = alliance.description || '';
+            document.getElementById('alliance-contact-name').value = alliance.contact_name || '';
+            document.getElementById('alliance-contact-email').value = alliance.contact_email || '';
+            document.getElementById('alliance-contact-phone').value = alliance.contact_phone || '';
+            document.getElementById('alliance-discount').value = alliance.discount_percentage;
+            document.getElementById('alliance-max-clients').value = alliance.max_clients || '';
+            document.getElementById('alliance-valid-from').value = alliance.valid_from || '';
+            document.getElementById('alliance-valid-until').value = alliance.valid_until || '';
+            document.getElementById('alliance-notes').value = alliance.notes || '';
+            
+            openModal('alliance');
+        }
+        
+        async function saveAlliance() {
+            const id = document.getElementById('alliance-id').value;
+            const data = {
+                code: document.getElementById('alliance-code').value.toUpperCase(),
+                name: document.getElementById('alliance-name').value,
+                description: document.getElementById('alliance-description').value || null,
+                contact_name: document.getElementById('alliance-contact-name').value || null,
+                contact_email: document.getElementById('alliance-contact-email').value || null,
+                contact_phone: document.getElementById('alliance-contact-phone').value || null,
+                discount_percentage: parseFloat(document.getElementById('alliance-discount').value),
+                max_clients: parseInt(document.getElementById('alliance-max-clients').value) || null,
+                valid_from: document.getElementById('alliance-valid-from').value || null,
+                valid_until: document.getElementById('alliance-valid-until').value || null,
+                notes: document.getElementById('alliance-notes').value || null,
+                is_active: true,
+                updated_at: new Date().toISOString()
+            };
+            
+            if (!data.code || !data.name || data.discount_percentage === null) {
+                alert('Complete los campos requeridos (*)');
+                return;
+            }
+            
+            try {
+                const url = id 
+                    ? `${SUPABASE_CONFIG.url}/rest/v1/alliances?id=eq.${id}`
+                    : `${SUPABASE_CONFIG.url}/rest/v1/alliances`;
+                
+                await fetch(url, {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                closeModal('alliance');
+                loadAlliances();
+            } catch (error) {
+                console.error('Error guardando alianza:', error);
+                alert('Error al guardar la alianza');
+            }
+        }
+        
+        async function toggleAllianceStatus(id, currentStatus) {
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/alliances?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ is_active: !currentStatus })
+                    }
+                );
+                loadAlliances();
+            } catch (error) {
+                console.error('Error cambiando estado:', error);
+            }
+        }
+        
+        // ==========================================
+        // CANALES DE VENTA
+        // ==========================================
+        async function loadChannels() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/sales_channels?select=*&order=name.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allChannels = await response.json();
+                renderChannels();
+            } catch (error) {
+                console.error('Error cargando canales:', error);
+            }
+        }
+        
+        function renderChannels() {
+            const tbody = document.getElementById('table-canales');
+            
+            if (allChannels.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <p>No hay canales registrados</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = allChannels.map(c => `
+                <tr>
+                    <td><strong>${c.code}</strong></td>
+                    <td>${c.name}</td>
+                    <td><span class="badge" style="background: ${getChannelTypeColor(c.channel_type)}; color: white;">${getChannelTypeLabel(c.channel_type)}</span></td>
+                    <td>${c.contact_name || '-'}<br><small>${c.contact_email || ''}</small></td>
+                    <td><strong>${c.commission_percentage}%</strong> ${c.commission_on_renewal ? '✓ Renovación' : ''}</td>
+                    <td><span class="badge badge-${c.is_active ? 'active' : 'inactive'}">${c.is_active ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn-action" onclick="editChannel(${c.id})" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action" onclick="toggleChannelStatus(${c.id}, ${c.is_active})" title="${c.is_active ? 'Desactivar' : 'Activar'}">
+                            <i class="bi bi-${c.is_active ? 'pause' : 'play'}"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function getChannelTypeColor(type) {
+            const colors = {
+                'direct': '#1D4E4F',
+                'partner': '#2D8B7A',
+                'reseller': '#5FB09C',
+                'affiliate': '#667eea'
+            };
+            return colors[type] || '#6c757d';
+        }
+        
+        function getChannelTypeLabel(type) {
+            const labels = {
+                'direct': 'Directo',
+                'partner': 'Partner',
+                'reseller': 'Reseller',
+                'affiliate': 'Afiliado'
+            };
+            return labels[type] || type;
+        }
+        
+        function editChannel(id) {
+            const channel = allChannels.find(c => c.id === id);
+            if (!channel) return;
+            
+            document.getElementById('modal-channel-title').textContent = 'Editar Canal';
+            document.getElementById('channel-id').value = id;
+            document.getElementById('channel-code').value = channel.code;
+            document.getElementById('channel-name').value = channel.name;
+            document.getElementById('channel-type').value = channel.channel_type;
+            document.getElementById('channel-contact-name').value = channel.contact_name || '';
+            document.getElementById('channel-contact-email').value = channel.contact_email || '';
+            document.getElementById('channel-contact-phone').value = channel.contact_phone || '';
+            document.getElementById('channel-commission').value = channel.commission_percentage;
+            document.getElementById('channel-commission-renewal').checked = channel.commission_on_renewal;
+            document.getElementById('channel-payment-method').value = channel.payment_method || '';
+            document.getElementById('channel-bank-name').value = channel.bank_name || '';
+            document.getElementById('channel-account-type').value = channel.bank_account_type || '';
+            document.getElementById('channel-account-number').value = channel.bank_account_number || '';
+            document.getElementById('channel-account-holder').value = channel.bank_account_holder || '';
+            document.getElementById('channel-tax-id').value = channel.tax_id || '';
+            document.getElementById('channel-notes').value = channel.notes || '';
+            
+            openModal('channel');
+        }
+        
+        async function saveChannel() {
+            const id = document.getElementById('channel-id').value;
+            const data = {
+                code: document.getElementById('channel-code').value.toUpperCase(),
+                name: document.getElementById('channel-name').value,
+                channel_type: document.getElementById('channel-type').value,
+                contact_name: document.getElementById('channel-contact-name').value || null,
+                contact_email: document.getElementById('channel-contact-email').value || null,
+                contact_phone: document.getElementById('channel-contact-phone').value || null,
+                commission_percentage: parseFloat(document.getElementById('channel-commission').value),
+                commission_on_renewal: document.getElementById('channel-commission-renewal').checked,
+                payment_method: document.getElementById('channel-payment-method').value || null,
+                bank_name: document.getElementById('channel-bank-name').value || null,
+                bank_account_type: document.getElementById('channel-account-type').value || null,
+                bank_account_number: document.getElementById('channel-account-number').value || null,
+                bank_account_holder: document.getElementById('channel-account-holder').value || null,
+                tax_id: document.getElementById('channel-tax-id').value || null,
+                notes: document.getElementById('channel-notes').value || null,
+                is_active: true,
+                updated_at: new Date().toISOString()
+            };
+            
+            if (!data.code || !data.name || !data.channel_type || data.commission_percentage === null) {
+                alert('Complete los campos requeridos (*)');
+                return;
+            }
+            
+            try {
+                const url = id 
+                    ? `${SUPABASE_CONFIG.url}/rest/v1/sales_channels?id=eq.${id}`
+                    : `${SUPABASE_CONFIG.url}/rest/v1/sales_channels`;
+                
+                await fetch(url, {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                closeModal('channel');
+                loadChannels();
+            } catch (error) {
+                console.error('Error guardando canal:', error);
+                alert('Error al guardar el canal');
+            }
+        }
+        
+        async function toggleChannelStatus(id, currentStatus) {
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/sales_channels?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ is_active: !currentStatus })
+                    }
+                );
+                loadChannels();
+            } catch (error) {
+                console.error('Error cambiando estado:', error);
+            }
+        }
+        
+        // ==========================================
+        // UTILIDADES GENERALES
+        // ==========================================
+        function openModal(type) {
+            // Limpiar formulario si es nuevo
+            const modal = document.getElementById(`modal-${type}`);
+            
+            if (!document.getElementById(`${type}-id`).value) {
+                modal.querySelectorAll('input, select, textarea').forEach(input => {
+                    if (input.type === 'checkbox') {
+                        input.checked = false;
+                    } else if (input.id.includes('-id')) {
+                        // No limpiar el campo hidden de ID
+                    } else {
+                        input.value = '';
+                    }
+                });
+                
+                // Establecer valores por defecto
+                if (type === 'country') {
+                    document.getElementById('country-currency').value = 'USD';
+                    document.getElementById('modal-country-title').textContent = 'Nuevo País';
+                }
+                if (type === 'type') {
+                    document.getElementById('type-order').value = '0';
+                    document.getElementById('modal-type-title').textContent = 'Nuevo Tipo';
+                }
+                if (type === 'alliance') {
+                    document.getElementById('modal-alliance-title').textContent = 'Nueva Alianza';
+                }
+                if (type === 'channel') {
+                    document.getElementById('channel-commission-renewal').checked = true;
+                    document.getElementById('modal-channel-title').textContent = 'Nuevo Canal';
+                }
+            }
+            
+            modal.classList.add('show');
+        }
+        
+        function closeModal(type) {
+            document.getElementById(`modal-${type}`).classList.remove('show');
+            
+            // Limpiar ID oculto
+            const idField = document.getElementById(`${type}-id`);
+            if (idField) idField.value = '';
+        }
+        
+        function formatDateRange(from, until) {
+            if (!from && !until) return 'Indefinido';
+            if (from && !until) return `Desde ${formatDateShort(from)}`;
+            if (!from && until) return `Hasta ${formatDateShort(until)}`;
+            return `${formatDateShort(from)} - ${formatDateShort(until)}`;
+        }
+        
+        function formatDateShort(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('user');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+</body>
+</html>
