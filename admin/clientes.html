@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Admin</title>
+
+    <!-- Cargar config.js -->
+    <script src="../config.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Variables CSS para colores dinámicos */
+        :root {
+            --primary-color: #1D4E4F;
+            --secondary-color: #2D8B7A;
+            --tertiary-color: #5FB09C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background: #fff;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .badge-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-closed {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .btn-action {
+            background: none;
+            border: 1px solid #dee2e6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-group small {
+            color: #6c757d;
+            font-size: 0.8rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+        
+        .input-with-button {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .input-with-button input {
+            flex: 1;
+        }
+        
+        .input-with-button button {
+            white-space: nowrap;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        footer p {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+                padding: 0.5rem 1rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            th, td {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><i class="bi bi-gear-fill"></i> <span id="site-name">GestionArte</span> - Admin</h1>
+        <div class="header-right">
+            <span class="user-info">Hola, <strong id="user-name">Usuario</strong></span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar">
+            <a href="index.html" class="nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="solicitudes.html" class="nav-item">
+                <i class="bi bi-ticket-detailed"></i> Solicitudes
+            </a>
+            <a href="clientes.html" class="nav-item active">
+                <i class="bi bi-building"></i> Clientes
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+            <a href="actualizaciones.html" class="nav-item">
+                <i class="bi bi-megaphone"></i> Actualizaciones
+            </a>
+            <a href="migraciones.html" class="nav-item">
+                <i class="bi bi-arrow-repeat"></i> Migraciones
+            </a>
+            <a href="catalogos.html" class="nav-item">
+                <i class="bi bi-book"></i> Catálogos
+            </a>
+            <a href="comisiones.html" class="nav-item">
+                <i class="bi bi-cash-coin"></i> Comisiones
+            </a>
+            <a href="configuracion.html" class="nav-item">
+                <i class="bi bi-sliders"></i> Configuración
+            </a>
+        </nav>
+
+        <main class="content">
+            <div class="content-header">
+                <h2><i class="bi bi-building"></i> Clientes</h2>
+                <button class="btn-primary" onclick="openModal('client')">
+                    <i class="bi bi-plus-lg"></i> Nuevo Cliente
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Institución</th>
+                            <th>Administrador</th>
+                            <th>Email</th>
+                            <th>API Key</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-clientes">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 <span id="footer-name">GestionArte</span></p>
+    </footer>
+
+    <!-- Modal Cliente -->
+    <div class="modal-overlay" id="modal-client">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-building"></i> <span id="modal-client-title">Nuevo Cliente</span></h3>
+                <button class="modal-close" onclick="closeModal('client')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="client-id">
+                
+                <div class="form-group">
+                    <label>Nombre de la Institución *</label>
+                    <input type="text" id="client-name" placeholder="Ej: Colegio San José">
+                </div>
+                
+                <div class="form-group">
+                    <label>Nombre del Administrador *</label>
+                    <input type="text" id="client-admin-name" placeholder="Ej: Juan Pérez">
+                </div>
+                
+                <div class="form-group">
+                    <label>Email del Administrador *</label>
+                    <input type="email" id="client-email" placeholder="admin@colegio.edu">
+                </div>
+                
+                <div class="form-group">
+                    <label>API Key *</label>
+                    <div class="input-with-button">
+                        <input type="text" id="client-api-key" placeholder="Llave única del cliente">
+                        <button class="btn-primary" onclick="generateApiKey()">
+                            <i class="bi bi-shuffle"></i> Generar
+                        </button>
+                    </div>
+                </div>
+                
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e9ecef;">
+                <h4 style="color: var(--primary-color); font-size: 0.95rem; margin-bottom: 1rem;">
+                    <i class="bi bi-database"></i> Conexión Supabase
+                </h4>
+                
+                <div class="form-group">
+                    <label>Supabase URL *</label>
+                    <input type="url" id="client-supabase-url" placeholder="https://xxxxx.supabase.co">
+                </div>
+                
+                <div class="form-group">
+                    <label>Supabase Anon Key *</label>
+                    <input type="text" id="client-supabase-anon-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                </div>
+                
+                <div class="form-group">
+                    <label>Supabase Service Role Key</label>
+                    <input type="password" id="client-supabase-service-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                    <small>
+                        <i class="bi bi-shield-lock"></i> Requerida para migraciones automáticas. Se encuentra en Settings → API → service_role
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Postgres Password</label>
+                    <input type="password" id="client-postgres-password" placeholder="Contraseña de la BD PostgreSQL">
+                    <small>
+                        <i class="bi bi-database-lock"></i> Se encuentra en Settings → Database → Connection string (password)
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>URL de Deployment *</label>
+                    <input type="url" id="client-deployment-url" placeholder="https://colegio.schoolnext.co">
+                </div>
+                
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e9ecef;">
+                <h4 style="color: var(--primary-color); font-size: 0.95rem; margin-bottom: 1rem;">
+                    <i class="bi bi-envelope"></i> Email del Proyecto
+                </h4>
+                
+                <div class="form-group">
+                    <label>Email del Proyecto</label>
+                    <input type="email" id="client-project-email" placeholder="notificaciones@colegio.edu">
+                    <small>
+                        <i class="bi bi-info-circle"></i> Email usado para enviar notificaciones del sistema
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Contraseña del Email</label>
+                    <input type="password" id="client-project-email-password" placeholder="••••••••">
+                    <small>
+                        <i class="bi bi-shield-lock"></i> Contraseña o App Password del email
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('client')">Cancelar</button>
+                <button class="btn-primary" onclick="saveClient()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // VERIFICAR SESIÓN
+        // ==========================================
+        const currentUser = JSON.parse(sessionStorage.getItem('user'));
+        if (!currentUser) {
+            window.location.href = '../login.html';
+        }
+        
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let allClients = [];
+        
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            document.getElementById('user-name').textContent = currentUser.full_name;
+            
+            if (typeof applySiteConfig === 'function') {
+                const config = await applySiteConfig();
+                if (config.site_name) {
+                    document.getElementById('site-name').textContent = config.site_name;
+                    document.getElementById('footer-name').textContent = config.site_name;
+                    document.title = `Clientes - ${config.site_name} Admin`;
+                }
+            }
+            
+            // Cargar datos iniciales
+            loadClients();
+        });
+        
+        // ==========================================
+        // CARGAR CLIENTES
+        // ==========================================
+        async function loadClients() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/clients?select=*&order=created_at.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allClients = await response.json();
+                renderClients();
+            } catch (error) {
+                console.error('Error cargando clientes:', error);
+            }
+        }
+        
+        function renderClients() {
+            const tbody = document.getElementById('table-clientes');
+            
+            if (allClients.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="bi bi-building"></i>
+                                <p>No hay clientes registrados</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = allClients.map(c => `
+                <tr>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.admin_name}</td>
+                    <td>${c.admin_email}</td>
+                    <td><code style="background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px;">${c.api_key}</code></td>
+                    <td><span class="badge ${c.is_active ? 'badge-resolved' : 'badge-closed'}">${c.is_active ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn-action" onclick="editClient(${c.id})" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action" onclick="toggleClientStatus(${c.id}, ${c.is_active})" title="${c.is_active ? 'Desactivar' : 'Activar'}">
+                            <i class="bi bi-${c.is_active ? 'pause' : 'play'}"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // ==========================================
+        // MODAL
+        // ==========================================
+        function openModal(type) {
+            document.getElementById('modal-client-title').textContent = 'Nuevo Cliente';
+            document.getElementById('client-id').value = '';
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-admin-name').value = '';
+            document.getElementById('client-email').value = '';
+            document.getElementById('client-api-key').value = '';
+            document.getElementById('client-supabase-url').value = '';
+            document.getElementById('client-supabase-anon-key').value = '';
+            document.getElementById('client-deployment-url').value = '';
+            document.getElementById('client-supabase-service-key').value = '';
+            document.getElementById('client-postgres-password').value = '';
+            document.getElementById('client-project-email').value = '';
+            document.getElementById('client-project-email-password').value = '';
+            
+            document.getElementById(`modal-${type}`).classList.add('show');
+        }
+        
+        function closeModal(type) {
+            document.getElementById(`modal-${type}`).classList.remove('show');
+        }
+        
+        function editClient(id) {
+            const client = allClients.find(c => c.id === id);
+            if (!client) return;
+            
+            document.getElementById('modal-client-title').textContent = 'Editar Cliente';
+            document.getElementById('client-id').value = id;
+            document.getElementById('client-name').value = client.name;
+            document.getElementById('client-admin-name').value = client.admin_name;
+            document.getElementById('client-email').value = client.admin_email;
+            document.getElementById('client-api-key').value = client.api_key;
+            document.getElementById('client-supabase-url').value = client.supabase_url || '';
+            document.getElementById('client-supabase-anon-key').value = client.supabase_anon_key || '';
+            document.getElementById('client-deployment-url').value = client.deployment_url || '';
+            document.getElementById('client-supabase-service-key').value = client.supabase_service_key || '';
+            document.getElementById('client-postgres-password').value = client.postgres_password || '';
+            document.getElementById('client-project-email').value = client.project_email || '';
+            document.getElementById('client-project-email-password').value = client.project_email_password || '';
+            
+            document.getElementById('modal-client').classList.add('show');
+        }
+        
+        async function saveClient() {
+            const id = document.getElementById('client-id').value;
+            const data = {
+                name: document.getElementById('client-name').value,
+                admin_name: document.getElementById('client-admin-name').value,
+                admin_email: document.getElementById('client-email').value,
+                api_key: document.getElementById('client-api-key').value,
+                supabase_url: document.getElementById('client-supabase-url').value,
+                supabase_anon_key: document.getElementById('client-supabase-anon-key').value,
+                deployment_url: document.getElementById('client-deployment-url').value || null,
+                supabase_service_key: document.getElementById('client-supabase-service-key').value || null,
+                postgres_password: document.getElementById('client-postgres-password').value || null,
+                project_email: document.getElementById('client-project-email').value || null,
+                project_email_password: document.getElementById('client-project-email-password').value || null,
+                updated_at: new Date().toISOString()
+            };
+            
+            if (!data.name || !data.admin_name || !data.admin_email || !data.api_key || !data.supabase_url || !data.supabase_anon_key) {
+                alert('Todos los campos marcados con * son requeridos');
+                return;
+            }
+            
+            try {
+                const url = id 
+                    ? `${SUPABASE_CONFIG.url}/rest/v1/clients?id=eq.${id}`
+                    : `${SUPABASE_CONFIG.url}/rest/v1/clients`;
+                
+                await fetch(url, {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                closeModal('client');
+                loadClients();
+            } catch (error) {
+                console.error('Error guardando cliente:', error);
+                alert('Error al guardar el cliente');
+            }
+        }
+        
+        async function toggleClientStatus(id, currentStatus) {
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/clients?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ is_active: !currentStatus })
+                    }
+                );
+                loadClients();
+            } catch (error) {
+                console.error('Error cambiando estado:', error);
+            }
+        }
+        
+        function generateApiKey() {
+            const key = 'key-' + Math.random().toString(36).substring(2, 10) + '-' + Date.now().toString(36);
+            document.getElementById('client-api-key').value = key;
+        }
+        
+        // ==========================================
+        // UTILIDADES
+        // ==========================================
+        function logout() {
+            sessionStorage.removeItem('user');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+</body>
+</html>
