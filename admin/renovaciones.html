@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renovaciones - GestionArte Admin</title>
+    
+    <!-- Cargar config.js -->
+    <script src="../config.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #1D4E4F;
+            --secondary-color: #2D8B7A;
+            --tertiary-color: #5FB09C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        .sidebar {
+            width: 220px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background: #fff;
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        /* Botones */
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-action {
+            background: none;
+            border: 1px solid #dee2e6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .stat-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .stat-card.success {
+            border-left-color: #28a745;
+        }
+        
+        .stat-card.info {
+            border-left-color: var(--secondary-color);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* Tablas */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .table-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .filter-select {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .badge-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .info-box strong {
+            color: #0066cc;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><i class="bi bi-cash-coin"></i> <span id="site-name">GestionArte</span> - Renovaciones</h1>
+        <div class="header-right">
+            <span class="user-info">Hola, <strong id="user-name">Usuario</strong></span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar" id="admin-sidebar">
+            <!-- Menu generado dinámicamente -->
+        </nav>
+
+        <main class="content">
+          <div class="content-header">
+                <h2><i class="bi bi-cash-coin"></i> Gestión de Renovaciones y Pagos</h2>
+                <button class="btn-primary" onclick="openModal('nuevo-pago')">
+                    <i class="bi bi-plus-lg"></i> Registrar Pago
+                </button>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats-grid" id="stats-renovaciones">
+                <div class="stat-card success">
+                    <div class="stat-number" id="stat-mes-actual">0</div>
+                    <div class="stat-label">Renovaciones este mes</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-number" id="stat-proximas">0</div>
+                    <div class="stat-label">Próximas a vencer (30 días)</div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-number" id="stat-gracia">0</div>
+                    <div class="stat-label">En período de gracia</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-total-anual">$0</div>
+                    <div class="stat-label">Total cobrado este año</div>
+                </div>
+            </div>
+
+            <!-- Tabla de Renovaciones -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Historial de Renovaciones</h3>
+                    <div class="table-filters">
+                        <select class="filter-select" id="filter-cliente">
+                            <option value="">Todos los clientes</option>
+                        </select>
+                        <select class="filter-select" id="filter-status-pago">
+                            <option value="">Todos los estados</option>
+                            <option value="paid">Pagado</option>
+                            <option value="pending">Pendiente</option>
+                            <option value="overdue">Vencido</option>
+                        </select>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Período</th>
+                            <th>Monto</th>
+                            <th>Método</th>
+                            <th>Estado</th>
+                            <th>Fecha Pago</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-renovaciones">
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+    <!-- Modal Registrar Pago -->
+    <div class="modal-overlay" id="modal-nuevo-pago">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-cash-coin"></i> Registrar Nuevo Pago</h3>
+                <button class="modal-close" onclick="closeModal('nuevo-pago')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Cliente *</label>
+                    <select id="pago-cliente-id" onchange="calcularMontoPago()">
+                        <option value="">Seleccione un cliente...</option>
+                    </select>
+                </div>
+
+                <div class="info-box" id="info-precio" style="display: none;">
+                    <strong>Precio calculado:</strong> <span id="precio-calculado">$0</span><br>
+                    <small>País: <span id="info-pais">-</span> | Descuento alianza: <span id="info-descuento">0%</span></small>
+                </div>
+
+                <div class="form-group">
+                    <label>Monto Pagado (USD) *</label>
+                    <input type="number" id="pago-monto" step="0.01" placeholder="Ej: 230.00">
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha de Pago *</label>
+                    <input type="date" id="pago-fecha" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Método de Pago *</label>
+                    <select id="pago-metodo">
+                        <option value="">Seleccione...</option>
+                        <option value="transferencia">Transferencia Bancaria</option>
+                        <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Referencia/Comprobante</label>
+                    <input type="text" id="pago-referencia" placeholder="Ej: TRX-123456">
+                </div>
+
+                <div class="form-group">
+                    <label>Notas</label>
+                    <input type="text" id="pago-notas" placeholder="Información adicional...">
+                </div>
+
+                <div class="info-box">
+                    <strong><i class="bi bi-info-circle"></i> Al registrar el pago:</strong><br>
+                    • Se creará el registro en Renovaciones<br>
+                    • El cliente cambiará automáticamente a estado "Activo"<br>
+                    • Se calcularán las fechas de inicio y vencimiento (1 año)<br>
+                    • Se establecerá la fecha de período de gracia (+7 días)
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('nuevo-pago')">Cancelar</button>
+                <button class="btn-primary" onclick="registrarPago()">
+                    <i class="bi bi-check-lg"></i> Registrar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    // ==========================================
+    // VERIFICAR SESIÓN
+    // ==========================================
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    if (!currentUser) {
+        window.location.href = '../login.html';
+    }
+
+    // ==========================================
+    // VARIABLES GLOBALES
+    // ==========================================
+    let allRenovaciones = [];
+    let allClientes = [];
+
+    // ==========================================
+    // INICIALIZACIÓN
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', async function() {
+        document.getElementById('user-name').textContent = currentUser.full_name;
+        
+        // Cargar configuración del sitio
+        if (typeof applySiteConfig === 'function') {
+            const config = await applySiteConfig();
+            if (config.site_name) {
+                document.getElementById('site-name').textContent = config.site_name;
+            }
+        }
+
+        // Establecer fecha de hoy por defecto
+        document.getElementById('pago-fecha').valueAsDate = new Date();
+        
+        // Cargar datos
+        await loadClientes();
+        await loadRenovaciones();
+        
+        // Event listeners para filtros
+        document.getElementById('filter-cliente').addEventListener('change', filterRenovaciones);
+        document.getElementById('filter-status-pago').addEventListener('change', filterRenovaciones);
+    });
+
+    // ==========================================
+    // CARGAR CLIENTES
+    // ==========================================
+    async function loadClientes() {
+        try {
+            const response = await fetch(
+                `${SUPABASE_CONFIG.url}/rest/v1/clients?select=*,countries(name,annual_price_usd),alliances(discount_percentage)&order=name.asc`,
+                {
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                    }
+                }
+            );
+            allClientes = await response.json();
+            
+            // Poblar selector de clientes
+            const selectCliente = document.getElementById('pago-cliente-id');
+            const filterCliente = document.getElementById('filter-cliente');
+            
+            allClientes.forEach(cliente => {
+                const option = document.createElement('option');
+                option.value = cliente.id;
+                option.textContent = cliente.name;
+                selectCliente.appendChild(option);
+                
+                const optionFilter = option.cloneNode(true);
+                filterCliente.appendChild(optionFilter);
+            });
+        } catch (error) {
+            console.error('Error cargando clientes:', error);
+        }
+    }
+
+    // ==========================================
+    // CARGAR RENOVACIONES
+    // ==========================================
+    async function loadRenovaciones() {
+        try {
+            const response = await fetch(
+                `${SUPABASE_CONFIG.url}/rest/v1/renewals?select=*,clients(name)&order=created_at.desc`,
+                {
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                    }
+                }
+            );
+            allRenovaciones = await response.json();
+            renderRenovaciones(allRenovaciones);
+            updateStats();
+        } catch (error) {
+            console.error('Error cargando renovaciones:', error);
+        }
+    }
+
+    // ==========================================
+    // RENDERIZAR TABLA
+    // ==========================================
+    function renderRenovaciones(renovaciones) {
+        const tbody = document.getElementById('table-renovaciones');
+        
+        if (renovaciones.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>No hay renovaciones registradas</p>
+                        </div>
+                    </td>
+                </tr>`;
+            return;
+        }
+        
+        tbody.innerHTML = renovaciones.map(r => `
+            <tr>
+                <td><strong>${r.clients?.name || 'N/A'}</strong></td>
+                <td>${formatDate(r.period_start)} - ${formatDate(r.period_end)}</td>
+                <td><strong>$${r.final_amount_usd}</strong></td>
+                <td>${r.payment_method || '-'}</td>
+                <td><span class="badge badge-${r.payment_status}">${getPaymentStatusLabel(r.payment_status)}</span></td>
+                <td>${r.payment_date ? formatDate(r.payment_date) : '-'}</td>
+                <td>
+                    <button class="btn-action" onclick="viewRenewal(${r.id})" title="Ver detalle">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // ==========================================
+    // FILTRAR RENOVACIONES
+    // ==========================================
+    function filterRenovaciones() {
+        const clienteFilter = document.getElementById('filter-cliente').value;
+        const statusFilter = document.getElementById('filter-status-pago').value;
+        
+        let filtered = allRenovaciones;
+        
+        if (clienteFilter) {
+            filtered = filtered.filter(r => r.client_id == clienteFilter);
+        }
+        if (statusFilter) {
+            filtered = filtered.filter(r => r.payment_status === statusFilter);
+        }
+        
+        renderRenovaciones(filtered);
+    }
+
+    // ==========================================
+    // ACTUALIZAR ESTADÍSTICAS
+    // ==========================================
+    function updateStats() {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        // Renovaciones este mes
+        const thisMonth = allRenovaciones.filter(r => {
+            const date = new Date(r.payment_date);
+            return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        }).length;
+        
+        // Total cobrado este año
+        const totalYear = allRenovaciones
+            .filter(r => new Date(r.payment_date).getFullYear() === currentYear && r.payment_status === 'paid')
+            .reduce((sum, r) => sum + parseFloat(r.final_amount_usd || 0), 0);
+        
+        // Próximas a vencer (30 días)
+        const in30Days = new Date();
+        in30Days.setDate(in30Days.getDate() + 30);
+        const proximas = allClientes.filter(c => {
+            if (!c.subscription_end_date) return false;
+            const endDate = new Date(c.subscription_end_date);
+            return endDate > now && endDate <= in30Days;
+        }).length;
+        
+        // En período de gracia
+        const enGracia = allClientes.filter(c => c.subscription_status === 'grace_period').length;
+        
+        document.getElementById('stat-mes-actual').textContent = thisMonth;
+        document.getElementById('stat-proximas').textContent = proximas;
+        document.getElementById('stat-gracia').textContent = enGracia;
+        document.getElementById('stat-total-anual').textContent = '$' + totalYear.toFixed(2);
+    }
+
+    // ==========================================
+    // CALCULAR MONTO DE PAGO
+    // ==========================================
+    function calcularMontoPago() {
+        const clienteId = document.getElementById('pago-cliente-id').value;
+        if (!clienteId) {
+            document.getElementById('info-precio').style.display = 'none';
+            return;
+        }
+        
+        const cliente = allClientes.find(c => c.id == clienteId);
+        if (!cliente) return;
+        
+        const precioBase = cliente.countries?.annual_price_usd || 0;
+        const descuento = cliente.alliances?.discount_percentage || 0;
+        const precioFinal = precioBase - (precioBase * descuento / 100);
+        
+        document.getElementById('precio-calculado').textContent = '$' + precioFinal.toFixed(2);
+        document.getElementById('info-pais').textContent = cliente.countries?.name || '-';
+        document.getElementById('info-descuento').textContent = descuento + '%';
+        document.getElementById('pago-monto').value = precioFinal.toFixed(2);
+        document.getElementById('info-precio').style.display = 'block';
+    }
+
+    // ==========================================
+    // REGISTRAR PAGO
+    // ==========================================
+    async function registrarPago() {
+        const clienteId = document.getElementById('pago-cliente-id').value;
+        const monto = document.getElementById('pago-monto').value;
+        const fecha = document.getElementById('pago-fecha').value;
+        const metodo = document.getElementById('pago-metodo').value;
+        const referencia = document.getElementById('pago-referencia').value;
+        const notas = document.getElementById('pago-notas').value;
+        
+        if (!clienteId || !monto || !fecha || !metodo) {
+            alert('Por favor complete todos los campos obligatorios');
+            return;
+        }
+        
+        const cliente = allClientes.find(c => c.id == clienteId);
+        const precioBase = cliente.countries?.annual_price_usd || 0;
+        const descuento = cliente.alliances?.discount_percentage || 0;
+        const descuentoMonto = precioBase * descuento / 100;
+        
+        // Calcular fechas
+        const fechaPago = new Date(fecha);
+        const fechaInicio = new Date(fechaPago);
+        const fechaFin = new Date(fechaPago);
+        fechaFin.setFullYear(fechaFin.getFullYear() + 1);
+        const fechaGracia = new Date(fechaFin);
+        fechaGracia.setDate(fechaGracia.getDate() + 7);
+        
+        try {
+            // 1. Crear renovación
+            const renewalData = {
+                client_id: parseInt(clienteId),
+                renewal_number: 1, // TODO: calcular número real
+                period_start: fechaInicio.toISOString().split('T')[0],
+                period_end: fechaFin.toISOString().split('T')[0],
+                base_price_usd: precioBase,
+                discount_percentage: descuento,
+                discount_amount_usd: descuentoMonto,
+                final_amount_usd: parseFloat(monto),
+                payment_status: 'paid',
+                payment_method: metodo,
+                payment_reference: referencia || null,
+                payment_date: fecha,
+                notes: notas || null,
+                processed_by: currentUser.id
+            };
+            
+            const renewalResponse = await fetch(
+                `${SUPABASE_CONFIG.url}/rest/v1/renewals`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(renewalData)
+                }
+            );
+            
+            if (!renewalResponse.ok) throw new Error('Error creando renovación');
+            
+            // 2. Actualizar cliente a "active"
+            const clientData = {
+                subscription_status: 'active',
+                subscription_start_date: fechaInicio.toISOString().split('T')[0],
+                subscription_end_date: fechaFin.toISOString().split('T')[0],
+                grace_period_end_date: fechaGracia.toISOString().split('T')[0],
+                updated_at: new Date().toISOString()
+            };
+            
+            await fetch(
+                `${SUPABASE_CONFIG.url}/rest/v1/clients?id=eq.${clienteId}`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(clientData)
+                }
+            );
+            
+            alert('✅ Pago registrado exitosamente\nEl cliente ha sido activado automáticamente');
+            closeModal('nuevo-pago');
+            loadRenovaciones();
+            
+        } catch (error) {
+            console.error('Error registrando pago:', error);
+            alert('❌ Error al registrar el pago');
+        }
+    }
+
+    // ==========================================
+    // MODAL
+    // ==========================================
+    function openModal(type) {
+        document.getElementById(`modal-${type}`).classList.add('show');
+    }
+    
+    function closeModal(type) {
+        document.getElementById(`modal-${type}`).classList.remove('show');
+        if (type === 'nuevo-pago') {
+            document.getElementById('pago-cliente-id').value = '';
+            document.getElementById('pago-monto').value = '';
+            document.getElementById('pago-metodo').value = '';
+            document.getElementById('pago-referencia').value = '';
+            document.getElementById('pago-notas').value = '';
+            document.getElementById('info-precio').style.display = 'none';
+        }
+    }
+
+    // ==========================================
+    // FUNCIONES AUXILIARES
+    // ==========================================
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    
+    function getPaymentStatusLabel(status) {
+        const labels = {
+            'paid': 'Pagado',
+            'pending': 'Pendiente',
+            'overdue': 'Vencido',
+            'refunded': 'Reembolsado'
+        };
+        return labels[status] || status;
+    }
+    
+    function viewRenewal(id) {
+        const renewal = allRenovaciones.find(r => r.id === id);
+        if (!renewal) return;
+        
+        alert(`Detalle de Renovación #${id}\n\n` +
+              `Cliente: ${renewal.clients?.name}\n` +
+              `Período: ${formatDate(renewal.period_start)} - ${formatDate(renewal.period_end)}\n` +
+              `Monto: $${renewal.final_amount_usd}\n` +
+              `Estado: ${getPaymentStatusLabel(renewal.payment_status)}\n` +
+              `Método: ${renewal.payment_method || '-'}\n` +
+              `Referencia: ${renewal.payment_reference || '-'}`);
+    }
+    
+    function logout() {
+        sessionStorage.removeItem('user');
+        window.location.href = '../login.html';
+    }
+</script>
+
+<script src="assets/js/admin-nav.js"></script>
+
+</html>
