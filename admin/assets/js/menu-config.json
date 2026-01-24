@@ -26,8 +26,7 @@
       "label": "Renovaciones",
       "icon": "bi-cash-coin",
       "url": "renovaciones.html",
-      "order": 4,
-      "badge": "NUEVO"
+      "order": 4
     },
     {
       "id": "usuarios",
