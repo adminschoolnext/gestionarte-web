@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comisiones - GestionArte Admin</title>
+
+    <!-- Cargar config.js -->
+    <script src="../config.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Variables CSS para colores dinámicos */
+        :root {
+            --primary-color: #1D4E4F;
+            --secondary-color: #2D8B7A;
+            --tertiary-color: #5FB09C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background: #fff;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .stat-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .stat-card.success {
+            border-left-color: #28a745;
+        }
+        
+        .stat-card.info {
+            border-left-color: var(--secondary-color);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* Filters */
+        .filters-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .badge-calculated {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-approved {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .badge-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-disputed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .btn-action {
+            background: none;
+            border: 1px solid #dee2e6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-action:disabled:hover {
+            background: none;
+            color: inherit;
+            border-color: #dee2e6;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 0.75rem;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            width: 150px;
+            flex-shrink: 0;
+        }
+        
+        .detail-value {
+            color: #333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        footer p {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+                padding: 0.5rem 1rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            th, td {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><i class="bi bi-currency-dollar"></i> <span id="site-name">GestionArte</span> - Admin</h1>
+        <div class="header-right">
+            <span class="user-info">Hola, <strong id="user-name">Usuario</strong></span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar">
+            <a href="index.html" class="nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="solicitudes.html" class="nav-item">
+                <i class="bi bi-ticket-detailed"></i> Solicitudes
+            </a>
+            <a href="clientes.html" class="nav-item">
+                <i class="bi bi-building"></i> Clientes
+            </a>
+            <a href="renovaciones.html" class="nav-item">
+                <i class="bi bi-arrow-repeat"></i> Renovaciones
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+            <a href="actualizaciones.html" class="nav-item">
+                <i class="bi bi-megaphone"></i> Actualizaciones
+            </a>
+            <a href="migraciones.html" class="nav-item">
+                <i class="bi bi-database"></i> Migraciones
+            </a>
+            <a href="catalogos.html" class="nav-item">
+                <i class="bi bi-book"></i> Catálogos
+            </a>
+            <a href="comisiones.html" class="nav-item active">
+                <i class="bi bi-currency-dollar"></i> Comisiones
+            </a>
+            <a href="configuracion.html" class="nav-item">
+                <i class="bi bi-sliders"></i> Configuración
+            </a>
+        </nav>
+
+        <main class="content">
+            <div class="content-header">
+                <h2><i class="bi bi-currency-dollar"></i> Gestión de Comisiones</h2>
+                <button class="btn-primary" onclick="window.location.href='reportes.html'">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Ver Reportes
+                </button>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card warning">
+                    <div class="stat-number" id="stat-calculated">$0</div>
+                    <div class="stat-label">Calculadas (Pendientes)</div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-number" id="stat-approved">$0</div>
+                    <div class="stat-label">Aprobadas (Este Mes)</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-number" id="stat-paid">$0</div>
+                    <div class="stat-label">Pagadas (Este Mes)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-total">$0</div>
+                    <div class="stat-label">Total Comisionado</div>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="filters-container">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label>Canal de Venta</label>
+                        <select id="filter-channel">
+                            <option value="">Todos los canales</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Estado</label>
+                        <select id="filter-status">
+                            <option value="">Todos los estados</option>
+                            <option value="calculated">Calculada</option>
+                            <option value="approved">Aprobada</option>
+                            <option value="paid">Pagada</option>
+                            <option value="disputed">Disputada</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Año</label>
+                        <select id="filter-year">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Mes</label>
+                        <select id="filter-month">
+                            <option value="">Todos</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn-primary" onclick="filterCommissions()" style="width: 100%;">
+                            <i class="bi bi-funnel"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Listado de Comisiones</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Canal de Venta</th>
+                            <th>Cliente</th>
+                            <th>Período</th>
+                            <th>Monto Venta</th>
+                            <th>% Com.</th>
+                            <th>Comisión</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-commissions">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 <span id="footer-name">GestionArte</span></p>
+    </footer>
+
+    <!-- Modal Ver Detalle -->
+    <div class="modal-overlay" id="modal-view-commission">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-currency-dollar"></i> Detalle de Comisión #<span id="view-commission-id"></span></h3>
+                <button class="modal-close" onclick="closeModal('view-commission')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <span class="detail-label">Canal de Venta:</span>
+                    <span class="detail-value" id="view-channel-name"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Cliente:</span>
+                    <span class="detail-value" id="view-client-name"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Renovación:</span>
+                    <span class="detail-value" id="view-renewal-link"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Período:</span>
+                    <span class="detail-value" id="view-period"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Monto de Venta:</span>
+                    <span class="detail-value" id="view-sale-amount"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">% Comisión:</span>
+                    <span class="detail-value" id="view-percentage"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Monto Comisión:</span>
+                    <span class="detail-value" id="view-commission-amount"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Estado:</span>
+                    <span class="detail-value" id="view-status"></span>
+                </div>
+                <div id="approval-info" style="display: none;">
+                    <hr style="margin: 1rem 0;">
+                    <div class="detail-row">
+                        <span class="detail-label">Aprobada por:</span>
+                        <span class="detail-value" id="view-approved-by"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Fecha aprobación:</span>
+                        <span class="detail-value" id="view-approved-at"></span>
+                    </div>
+                </div>
+                <div id="payment-info" style="display: none;">
+                    <hr style="margin: 1rem 0;">
+                    <div class="detail-row">
+                        <span class="detail-label">Fecha de pago:</span>
+                        <span class="detail-value" id="view-payment-date"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Método de pago:</span>
+                        <span class="detail-value" id="view-payment-method"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Referencia:</span>
+                        <span class="detail-value" id="view-payment-reference"></span>
+                    </div>
+                </div>
+                <div id="notes-section" style="display: none;">
+                    <hr style="margin: 1rem 0;">
+                    <div class="detail-row">
+                        <span class="detail-label">Notas:</span>
+                    </div>
+                    <p id="view-notes" style="background: #f8f9fa; padding: 1rem; border-radius: 6px;"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('view-commission')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Aprobar Comisión -->
+    <div class="modal-overlay" id="modal-approve-commission">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-check-circle"></i> Aprobar Comisión</h3>
+                <button class="modal-close" onclick="closeModal('approve-commission')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="approve-commission-id">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Confirmar aprobación:</strong> Esta acción marcará la comisión como aprobada y lista para pago.
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Canal:</span>
+                    <span class="detail-value" id="approve-channel-name"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Cliente:</span>
+                    <span class="detail-value" id="approve-client-name"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Monto Comisión:</span>
+                    <span class="detail-value" id="approve-amount"></span>
+                </div>
+                <div class="form-group">
+                    <label>Notas (opcional)</label>
+                    <textarea id="approve-notes" rows="3" placeholder="Observaciones sobre la aprobación..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('approve-commission')">Cancelar</button>
+                <button class="btn-success" onclick="approveCommission()">
+                    <i class="bi bi-check-lg"></i> Aprobar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Registrar Pago -->
+    <div class="modal-overlay" id="modal-pay-commission">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="bi bi-cash-coin"></i> Registrar Pago de Comisión</h3>
+                <button class="modal-close" onclick="closeModal('pay-commission')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="pay-commission-id">
+                <div class="detail-row">
+                    <span class="detail-label">Canal:</span>
+                    <span class="detail-value" id="pay-channel-name"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Monto a Pagar:</span>
+                    <span class="detail-value" id="pay-amount"></span>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Pago *</label>
+                    <input type="date" id="pay-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Método de Pago *</label>
+                    <select id="pay-method" required>
+                        <option value="">Seleccione...</option>
+                        <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Referencia de Pago *</label>
+                    <input type="text" id="pay-reference" placeholder="Ej: Transferencia #123456" required>
+                </div>
+                <div class="form-group">
+                    <label>Notas (opcional)</label>
+                    <textarea id="pay-notes" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('pay-commission')">Cancelar</button>
+                <button class="btn-success" onclick="registerPayment()">
+                    <i class="bi bi-check-lg"></i> Registrar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // VERIFICAR SESIÓN
+        // ==========================================
+        const currentUser = JSON.parse(sessionStorage.getItem('user'));
+        if (!currentUser) {
+            window.location.href = '../login.html';
+        }
+        
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let allCommissions = [];
+        let allChannels = [];
+        let allClients = [];
+        let currentCommissionId = null;
+        
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            document.getElementById('user-name').textContent = currentUser.full_name;
+            
+            if (typeof applySiteConfig === 'function') {
+                const config = await applySiteConfig();
+                if (config.site_name) {
+                    document.getElementById('site-name').textContent = config.site_name;
+                    document.getElementById('footer-name').textContent = config.site_name;
+                }
+            }
+            
+            // Poblar filtro de años
+            populateYearFilter();
+            
+            // Cargar datos
+            await loadChannels();
+            await loadClients();
+            await loadCommissions();
+            
+            // Event listeners
+            document.getElementById('filter-status').addEventListener('change', filterCommissions);
+            document.getElementById('filter-channel').addEventListener('change', filterCommissions);
+        });
+        
+        // ==========================================
+        // POBLAR FILTRO DE AÑOS
+        // ==========================================
+        function populateYearFilter() {
+            const yearSelect = document.getElementById('filter-year');
+            const currentYear = new Date().getFullYear();
+            
+            for (let year = currentYear; year >= currentYear - 5; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+            
+            // Seleccionar año actual por defecto
+            yearSelect.value = currentYear;
+        }
+        
+        // ==========================================
+        // CARGAR CANALES DE VENTA
+        // ==========================================
+        async function loadChannels() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/sales_channels?select=*&order=name.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allChannels = await response.json();
+                
+                // Poblar filtro
+                const select = document.getElementById('filter-channel');
+                allChannels.forEach(channel => {
+                    const option = document.createElement('option');
+                    option.value = channel.id;
+                    option.textContent = channel.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando canales:', error);
+            }
+        }
+        
+        // ==========================================
+        // CARGAR CLIENTES
+        // ==========================================
+        async function loadClients() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/clients?select=id,name`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allClients = await response.json();
+            } catch (error) {
+                console.error('Error cargando clientes:', error);
+            }
+        }
+        
+        // ==========================================
+        // CARGAR COMISIONES
+        // ==========================================
+        async function loadCommissions() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/commissions?select=*,sales_channels(name),clients(name)&order=created_at.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+                        }
+                    }
+                );
+                allCommissions = await response.json();
+                renderCommissions(allCommissions);
+                updateStats();
+            } catch (error) {
+                console.error('Error cargando comisiones:', error);
+            }
+        }
+        
+        // ==========================================
+        // RENDERIZAR COMISIONES
+        // ==========================================
+        function renderCommissions(commissions) {
+            const tbody = document.getElementById('table-commissions');
+            
+            if (commissions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">
+                                <i class="bi bi-currency-dollar"></i>
+                                <p>No hay comisiones registradas</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = commissions.map(c => {
+                const canApprove = c.status === 'calculated';
+                const canPay = c.status === 'approved';
+                
+                return `
+                <tr>
+                    <td>#${c.id}</td>
+                    <td>${c.sales_channels?.name || 'N/A'}</td>
+                    <td>${c.clients?.name || 'N/A'}</td>
+                    <td>${getMonthName(c.period_month)} ${c.period_year}</td>
+                    <td>$${parseFloat(c.sale_amount_usd).toFixed(2)}</td>
+                    <td>${c.commission_percentage}%</td>
+                    <td><strong>$${parseFloat(c.commission_amount_usd).toFixed(2)}</strong></td>
+                    <td><span class="badge badge-${getStatusClass(c.status)}">${getStatusLabel(c.status)}</span></td>
+                    <td>
+                        <button class="btn-action" onclick="viewCommission(${c.id})" title="Ver detalle">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn-action" onclick="openApproveModal(${c.id})" 
+                                title="Aprobar" ${!canApprove ? 'disabled' : ''}>
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                        <button class="btn-action" onclick="openPayModal(${c.id})" 
+                                title="Registrar pago" ${!canPay ? 'disabled' : ''}>
+                            <i class="bi bi-cash-coin"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+        
+        // ==========================================
+        // FILTRAR COMISIONES
+        // ==========================================
+        function filterCommissions() {
+            const statusFilter = document.getElementById('filter-status').value;
+            const channelFilter = document.getElementById('filter-channel').value;
+            const yearFilter = document.getElementById('filter-year').value;
+            const monthFilter = document.getElementById('filter-month').value;
+            
+            let filtered = allCommissions;
+            
+            if (statusFilter) {
+                filtered = filtered.filter(c => c.status === statusFilter);
+            }
+            if (channelFilter) {
+                filtered = filtered.filter(c => c.sales_channel_id === parseInt(channelFilter));
+            }
+            if (yearFilter) {
+                filtered = filtered.filter(c => c.period_year === parseInt(yearFilter));
+            }
+            if (monthFilter) {
+                filtered = filtered.filter(c => c.period_month === parseInt(monthFilter));
+            }
+            
+            renderCommissions(filtered);
+        }
+        
+        // ==========================================
+        // ACTUALIZAR ESTADÍSTICAS
+        // ==========================================
+        function updateStats() {
+            const calculated = allCommissions
+                .filter(c => c.status === 'calculated')
+                .reduce((sum, c) => sum + parseFloat(c.commission_amount_usd), 0);
+            
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            
+            const approved = allCommissions
+                .filter(c => c.status === 'approved' && c.period_month === currentMonth && c.period_year === currentYear)
+                .reduce((sum, c) => sum + parseFloat(c.commission_amount_usd), 0);
+            
+            const paid = allCommissions
+                .filter(c => c.status === 'paid' && c.period_month === currentMonth && c.period_year === currentYear)
+                .reduce((sum, c) => sum + parseFloat(c.commission_amount_usd), 0);
+            
+            const total = allCommissions
+                .reduce((sum, c) => sum + parseFloat(c.commission_amount_usd), 0);
+            
+            document.getElementById('stat-calculated').textContent = `$${calculated.toFixed(2)}`;
+            document.getElementById('stat-approved').textContent = `$${approved.toFixed(2)}`;
+            document.getElementById('stat-paid').textContent = `$${paid.toFixed(2)}`;
+            document.getElementById('stat-total').textContent = `$${total.toFixed(2)}`;
+        }
+        
+        // ==========================================
+        // VER DETALLE DE COMISIÓN
+        // ==========================================
+        async function viewCommission(id) {
+            const commission = allCommissions.find(c => c.id === id);
+            if (!commission) return;
+            
+            document.getElementById('view-commission-id').textContent = id;
+            document.getElementById('view-channel-name').textContent = commission.sales_channels?.name || 'N/A';
+            document.getElementById('view-client-name').textContent = commission.clients?.name || 'N/A';
+            document.getElementById('view-renewal-link').innerHTML = `<a href="renovaciones.html?id=${commission.renewal_id}">#${commission.renewal_id}</a>`;
+            document.getElementById('view-period').textContent = `${getMonthName(commission.period_month)} ${commission.period_year}`;
+            document.getElementById('view-sale-amount').textContent = `$${parseFloat(commission.sale_amount_usd).toFixed(2)} USD`;
+            document.getElementById('view-percentage').textContent = `${commission.commission_percentage}%`;
+            document.getElementById('view-commission-amount').textContent = `$${parseFloat(commission.commission_amount_usd).toFixed(2)} USD`;
+            document.getElementById('view-status').innerHTML = `<span class="badge badge-${getStatusClass(commission.status)}">${getStatusLabel(commission.status)}</span>`;
+            
+            // Información de aprobación
+            if (commission.status === 'approved' || commission.status === 'paid') {
+                document.getElementById('approval-info').style.display = 'block';
+                document.getElementById('view-approved-by').textContent = 'Administrador'; // TODO: Cargar nombre real
+                document.getElementById('view-approved-at').textContent = commission.approved_at ? formatDate(commission.approved_at) : 'N/A';
+            } else {
+                document.getElementById('approval-info').style.display = 'none';
+            }
+            
+            // Información de pago
+            if (commission.status === 'paid') {
+                document.getElementById('payment-info').style.display = 'block';
+                document.getElementById('view-payment-date').textContent = commission.payment_date ? formatDate(commission.payment_date) : 'N/A';
+                document.getElementById('view-payment-method').textContent = commission.payment_method || 'N/A';
+                document.getElementById('view-payment-reference').textContent = commission.payment_reference || 'N/A';
+            } else {
+                document.getElementById('payment-info').style.display = 'none';
+            }
+            
+            // Notas
+            if (commission.notes) {
+                document.getElementById('notes-section').style.display = 'block';
+                document.getElementById('view-notes').textContent = commission.notes;
+            } else {
+                document.getElementById('notes-section').style.display = 'none';
+            }
+            
+            openModal('view-commission');
+        }
+        
+        // ==========================================
+        // ABRIR MODAL APROBAR
+        // ==========================================
+        function openApproveModal(id) {
+            const commission = allCommissions.find(c => c.id === id);
+            if (!commission) return;
+            
+            currentCommissionId = id;
+            document.getElementById('approve-commission-id').value = id;
+            document.getElementById('approve-channel-name').textContent = commission.sales_channels?.name || 'N/A';
+            document.getElementById('approve-client-name').textContent = commission.clients?.name || 'N/A';
+            document.getElementById('approve-amount').textContent = `$${parseFloat(commission.commission_amount_usd).toFixed(2)} USD`;
+            document.getElementById('approve-notes').value = '';
+            
+            openModal('approve-commission');
+        }
+        
+        // ==========================================
+        // APROBAR COMISIÓN
+        // ==========================================
+        async function approveCommission() {
+            const id = parseInt(document.getElementById('approve-commission-id').value);
+            const notes = document.getElementById('approve-notes').value;
+            
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/commissions?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: 'approved',
+                            approved_by: currentUser.id,
+                            approved_at: new Date().toISOString(),
+                            notes: notes || null,
+                            updated_at: new Date().toISOString()
+                        })
+                    }
+                );
+                
+                closeModal('approve-commission');
+                showToast('Comisión aprobada exitosamente', 'success');
+                loadCommissions();
+            } catch (error) {
+                console.error('Error aprobando comisión:', error);
+                showToast('Error al aprobar la comisión', 'error');
+            }
+        }
+        
+        // ==========================================
+        // ABRIR MODAL PAGO
+        // ==========================================
+        function openPayModal(id) {
+            const commission = allCommissions.find(c => c.id === id);
+            if (!commission) return;
+            
+            currentCommissionId = id;
+            document.getElementById('pay-commission-id').value = id;
+            document.getElementById('pay-channel-name').textContent = commission.sales_channels?.name || 'N/A';
+            document.getElementById('pay-amount').textContent = `$${parseFloat(commission.commission_amount_usd).toFixed(2)} USD`;
+            
+            // Establecer fecha actual por defecto
+            document.getElementById('pay-date').valueAsDate = new Date();
+            document.getElementById('pay-method').value = '';
+            document.getElementById('pay-reference').value = '';
+            document.getElementById('pay-notes').value = '';
+            
+            openModal('pay-commission');
+        }
+        
+        // ==========================================
+        // REGISTRAR PAGO
+        // ==========================================
+        async function registerPayment() {
+            const id = parseInt(document.getElementById('pay-commission-id').value);
+            const paymentDate = document.getElementById('pay-date').value;
+            const paymentMethod = document.getElementById('pay-method').value;
+            const paymentReference = document.getElementById('pay-reference').value;
+            const notes = document.getElementById('pay-notes').value;
+            
+            if (!paymentDate || !paymentMethod || !paymentReference) {
+                showToast('Por favor complete todos los campos requeridos', 'error');
+                return;
+            }
+            
+            try {
+                await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/commissions?id=eq.${id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.anonKey,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: 'paid',
+                            payment_date: paymentDate,
+                            payment_method: paymentMethod,
+                            payment_reference: paymentReference,
+                            notes: notes || null,
+                            updated_at: new Date().toISOString()
+                        })
+                    }
+                );
+                
+                closeModal('pay-commission');
+                showToast('Pago registrado exitosamente', 'success');
+                loadCommissions();
+            } catch (error) {
+                console.error('Error registrando pago:', error);
+                showToast('Error al registrar el pago', 'error');
+            }
+        }
+        
+        // ==========================================
+        // UTILIDADES
+        // ==========================================
+        function openModal(type) {
+            document.getElementById(`modal-${type}`).classList.add('show');
+        }
+        
+        function closeModal(type) {
+            document.getElementById(`modal-${type}`).classList.remove('show');
+        }
+        
+        function getStatusClass(status) {
+            const classes = {
+                'calculated': 'calculated',
+                'approved': 'approved',
+                'paid': 'paid',
+                'disputed': 'disputed'
+            };
+            return classes[status] || 'calculated';
+        }
+        
+        function getStatusLabel(status) {
+            const labels = {
+                'calculated': 'Calculada',
+                'approved': 'Aprobada',
+                'paid': 'Pagada',
+                'disputed': 'Disputada'
+            };
+            return labels[status] || status;
+        }
+        
+        function getMonthName(month) {
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            return months[month - 1] || month;
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('es-CO', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric'
+            });
+        }
+        
+        function showToast(message, type = 'info') {
+            // Remover toast anterior si existe
+            const existingToast = document.querySelector('.toast-notification');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-size: 0.9rem;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 4000);
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('user');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+</body>
+</html>
