@@ -56,13 +56,7 @@
           "name": "Órbita",
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web Browser",
-          "offers": {
-            "@type": "AggregateOffer",
-            "lowPrice": "99",
-            "highPrice": "299",
-            "priceCurrency": "USD",
-            "availability": "https://schema.org/InStock"
-          },
+          
           "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": "4.8",
@@ -114,14 +108,7 @@
                 "text": "Órbita es una plataforma web de gestión organizacional que integra 7 módulos para administrar procesos, personas y datos de forma centralizada. Permite gestionar indicadores KPI, formación, encuestas, PQR, procedimientos y proyectos desde una sola interfaz en la nube."
               }
             },
-            {
-              "@type": "Question",
-              "name": "¿Cuánto cuesta Órbita?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Órbita tiene precios diferenciados por país basados en el salario mínimo local (aproximadamente 50% del salario mínimo mensual, una vez al año). Los precios van desde $99 USD/año en Argentina hasta $299 USD/año en Chile, Costa Rica, Panamá y Uruguay. Incluye todos los módulos y usuarios ilimitados."
-              }
-            },
+           
             {
               "@type": "Question",
               "name": "¿Qué módulos incluye Órbita?",
@@ -866,279 +853,6 @@
         }
         .tech-card p { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; margin: 0; }
 
-        /* ===== PRICING SECTION ===== */
-        .pricing-section {
-            padding: 6rem 0;
-            background: var(--surface);
-        }
-
-        .pricing-section .section-subtitle {
-            font-size: 1.15rem;
-            color: var(--text-light);
-            max-width: 700px;
-            margin: 0 auto 1.5rem;
-            line-height: 1.7;
-        }
-
-        .pricing-section .section-subtitle strong {
-            color: var(--primary);
-        }
-
-        .pricing-philosophy {
-            background: var(--light);
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 2rem auto 3rem;
-            max-width: 800px;
-            box-shadow: var(--shadow-sm);
-            border-left: 4px solid var(--secondary);
-        }
-
-        .pricing-philosophy h4 {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .pricing-philosophy p {
-            color: var(--text-light);
-            margin-bottom: 0.75rem;
-            line-height: 1.7;
-        }
-
-        .pricing-philosophy p:last-child {
-            margin-bottom: 0;
-            font-weight: 500;
-            color: var(--primary);
-        }
-
-        .pricing-table-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--surface);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--surface-alt);
-        }
-
-        .pricing-table-header {
-            background: var(--gradient-hero);
-            color: white;
-            padding: 1.5rem 2rem;
-            text-align: center;
-        }
-
-        .pricing-table-header h3 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 1.5rem;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: white;
-        }
-
-        .pricing-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .pricing-table thead {
-            background: var(--light);
-        }
-
-        .pricing-table thead th {
-            padding: 1rem 1.5rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-light);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--surface-alt);
-        }
-
-        .pricing-table thead th:last-child {
-            text-align: right;
-        }
-
-        .pricing-table tbody tr {
-            transition: background 0.2s;
-        }
-
-        .pricing-table tbody tr:hover {
-            background: var(--light);
-        }
-
-        .pricing-table tbody td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--surface-alt);
-            color: var(--text);
-        }
-
-        .pricing-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .pricing-table .country-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 500;
-        }
-
-        .pricing-table .country-flag {
-            font-size: 1.5rem;
-            line-height: 1;
-        }
-
-        .pricing-table .price-cell {
-            text-align: right;
-        }
-
-        .pricing-table .price-annual {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .pricing-table .price-monthly {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-        }
-
-        /* Bandas de precio - colores sutiles */
-        .pricing-table tr[data-band="indigo"] {
-            background: rgba(99, 102, 241, 0.05);
-        }
-        .pricing-table tr[data-band="naranja"] {
-            background: rgba(251, 146, 60, 0.05);
-        }
-        .pricing-table tr[data-band="verde"] {
-            background: rgba(45, 139, 122, 0.05);
-        }
-        .pricing-table tr[data-band="azul"] {
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .pricing-includes {
-            max-width: 900px;
-            margin: 3rem auto 0;
-            background: var(--light);
-            border-radius: 16px;
-            padding: 2rem;
-            border: 1px solid var(--surface-alt);
-        }
-
-        .pricing-includes h4 {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .includes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .include-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            background: var(--surface);
-            border-radius: 8px;
-            color: var(--text);
-        }
-
-        .include-item i {
-            color: var(--secondary);
-            font-size: 1.1rem;
-        }
-
-        .pricing-infra-note {
-            max-width: 900px;
-            margin: 2rem auto 0;
-            padding: 1.5rem;
-            background: var(--surface-alt);
-            border-radius: 12px;
-            border: 1px solid var(--surface-alt);
-        }
-
-        .pricing-infra-note h5 {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .pricing-infra-note p {
-            color: var(--text-light);
-            margin: 0;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .pricing-footnote {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 2rem;
-            font-style: italic;
-        }
-
-        .pricing-cta {
-            text-align: center;
-            margin-top: 3rem;
-        }
-
-        .pricing-cta .btn-pricing {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--gradient-accent);
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-            box-shadow: var(--shadow-md);
-        }
-
-        .pricing-cta .btn-pricing:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .pricing-cta .cta-secondary-text {
-            display: block;
-            margin-top: 1rem;
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-
-        .pricing-cta .cta-secondary-text a {
-            color: var(--secondary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .pricing-cta .cta-secondary-text a:hover {
-            text-decoration: underline;
-        }
-
         /* ===== CTA SECTION ===== */
         .cta {
             padding: 6rem 0;
@@ -1315,7 +1029,6 @@
             <li><a href="#problemas">El Problema</a></li>
             <li><a href="#modulos">Módulos</a></li>
             <li><a href="#beneficios">Beneficios</a></li>
-            <li><a href="#precios">Precios</a></li>
             <li><a href="#tecnologia">Tecnología</a></li>
             <li><a href="demo.html" class="nav-cta">Acceso a Demo</a></li>
         </ul>
@@ -1476,13 +1189,6 @@
                         <li>🏢 <strong>Servicios profesionales:</strong> Consultorías, firmas legales, contables</li>
                         <li>🏛️ <strong>Entidades gubernamentales:</strong> Alcaldías, ministerios, instituciones públicas</li>
                     </ul>
-                    
-                    <h3>Precios:</h3>
-                    <p class="what-is-price">
-                        <strong>Precios diferenciados por país</strong> basados en el salario mínimo local (aproximadamente 50% del salario mínimo mensual, una vez al año). 
-                        Desde <strong>$99 USD/año</strong> hasta <strong>$299 USD/año</strong> según tu país. 
-                        Usuarios ilimitados y todos los módulos incluidos. <a href="#precios">Ver tabla de precios →</a>
-                    </p>
                     
                     <p class="what-is-updated">
                         <em>📅 Información actualizada: Enero 2026</em>
@@ -1835,289 +1541,6 @@
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section class="pricing-section" id="precios">
-        <div class="container">
-            <!-- Encabezado -->
-            <div class="section-header">
-                <span class="section-label">Precios</span>
-                <h2>Gestión de Clase Mundial, Precio Justo para Tu País</h2>
-                <p class="section-subtitle">
-                    Creemos que la buena gestión no debería ser un privilegio. Nuestro precio se ajusta al costo de vida de cada país: 
-                    <strong>pagas aproximadamente el 50% de un salario mínimo mensual de tu país, una vez al año.</strong>
-                </p>
-            </div>
-
-            <!-- Filosofía de precios -->
-            <div class="pricing-philosophy">
-                <h4><i class="bi bi-lightbulb"></i> ¿Por qué precios diferenciados?</h4>
-                <p>
-                    Las herramientas de gestión empresarial suelen costar lo mismo sin importar si estás en San José o en Buenos Aires. Eso no es justo.
-                </p>
-                <p>
-                    En GestionArte calculamos el precio para cada país basándonos en su salario mínimo local. El resultado: una organización en Argentina paga menos que una en Chile, pero ambas hacen el mismo esfuerzo económico relativo.
-                </p>
-                <p>
-                    Mismo software. Mismas funcionalidades. Mismo soporte. Precio adaptado a tu realidad.
-                </p>
-            </div>
-
-            <!-- Tabla de precios -->
-            <div class="pricing-table-container">
-                <div class="pricing-table-header">
-                    <h3><i class="bi bi-globe-americas"></i> Tu inversión anual según tu país</h3>
-                </div>
-                <table class="pricing-table">
-                    <thead>
-                        <tr>
-                            <th>País</th>
-                            <th>Precio Anual</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr data-band="indigo">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇦🇷</span>
-                                    <span>Argentina</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$99 USD</div>
-                                <div class="price-monthly">~$8/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="naranja">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇧🇴</span>
-                                    <span>Bolivia</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$149 USD</div>
-                                <div class="price-monthly">~$12/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="azul">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇨🇱</span>
-                                    <span>Chile</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$299 USD</div>
-                                <div class="price-monthly">~$25/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="verde">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇨🇴</span>
-                                    <span>Colombia</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$230 USD</div>
-                                <div class="price-monthly">~$19/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="azul">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇨🇷</span>
-                                    <span>Costa Rica</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$299 USD</div>
-                                <div class="price-monthly">~$25/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="verde">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇪🇨</span>
-                                    <span>Ecuador</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$230 USD</div>
-                                <div class="price-monthly">~$19/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="naranja">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇸🇻</span>
-                                    <span>El Salvador</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$149 USD</div>
-                                <div class="price-monthly">~$12/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="verde">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇬🇹</span>
-                                    <span>Guatemala</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$230 USD</div>
-                                <div class="price-monthly">~$19/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="verde">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇭🇳</span>
-                                    <span>Honduras</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$230 USD</div>
-                                <div class="price-monthly">~$19/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="verde">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇲🇽</span>
-                                    <span>México</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$230 USD</div>
-                                <div class="price-monthly">~$19/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="azul">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇵🇦</span>
-                                    <span>Panamá</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$299 USD</div>
-                                <div class="price-monthly">~$25/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="verde">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇵🇾</span>
-                                    <span>Paraguay</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$230 USD</div>
-                                <div class="price-monthly">~$19/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="naranja">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇵🇪</span>
-                                    <span>Perú</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$149 USD</div>
-                                <div class="price-monthly">~$12/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="verde">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇩🇴</span>
-                                    <span>República Dominicana</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$230 USD</div>
-                                <div class="price-monthly">~$19/mes</div>
-                            </td>
-                        </tr>
-                        <tr data-band="azul">
-                            <td>
-                                <div class="country-cell">
-                                    <span class="country-flag">🇺🇾</span>
-                                    <span>Uruguay</span>
-                                </div>
-                            </td>
-                            <td class="price-cell">
-                                <div class="price-annual">$299 USD</div>
-                                <div class="price-monthly">~$25/mes</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Qué incluye -->
-            <div class="pricing-includes">
-                <h4><i class="bi bi-check-circle"></i> Todo incluido, sin sorpresas</h4>
-                <div class="includes-grid">
-                    <div class="include-item">
-                        <i class="bi bi-check-lg"></i>
-                        <span>Los 7 módulos completos (70+ funcionalidades)</span>
-                    </div>
-                    <div class="include-item">
-                        <i class="bi bi-check-lg"></i>
-                        <span>Usuarios ilimitados</span>
-                    </div>
-                    <div class="include-item">
-                        <i class="bi bi-check-lg"></i>
-                        <span>Base de datos aislada exclusiva</span>
-                    </div>
-                    <div class="include-item">
-                        <i class="bi bi-check-lg"></i>
-                        <span>Soporte incluido</span>
-                    </div>
-                    <div class="include-item">
-                        <i class="bi bi-check-lg"></i>
-                        <span>Actualizaciones automáticas</span>
-                    </div>
-                    <div class="include-item">
-                        <i class="bi bi-check-lg"></i>
-                        <span>Sin costos de implementación</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Nota sobre infraestructura -->
-            <div class="pricing-infra-note">
-                <h5><i class="bi bi-database"></i> Sobre la infraestructura</h5>
-                <p>
-                    Tu suscripción opera sobre Supabase con un plan gratuito que cubre las necesidades del 99% de las organizaciones. 
-                    Solo en casos de uso intensivo (miles de documentos o cientos de usuarios muy activos) podrías necesitar el plan Pro 
-                    de Supabase ($25 USD/mes), que pagarías directamente a ellos.
-                </p>
-            </div>
-
-            <!-- Nota al pie -->
-            <p class="pricing-footnote">
-                Precios calculados con base en salarios mínimos 2026. Se revisan anualmente.
-            </p>
-
-            <!-- CTA -->
-            <div class="pricing-cta">
-                <a href="#ENLACE_FORMULARIO" class="btn-pricing">
-                    <i class="bi bi-rocket-takeoff"></i>
-                    Solicitar Acceso
-                </a>
-                <p class="cta-secondary-text">
-                    ¿Tu país no está en la lista? <a href="mailto:contacto@gestionarte.co">Escríbenos</a> y encontramos una solución.
-                </p>
-            </div>
-        </div>
-    </section>
-    
     <!-- Tecnología y Seguridad -->
     <section class="technology" id="tecnologia">
         <div class="container">
@@ -2190,13 +1613,13 @@
                 <p class="cta-tagline">Tu organización está en las mejores manos posibles: las tuyas.<br>Nosotros te damos las herramientas.</p>
                 <h2>¿Listo para transformar tu organización?</h2>
                 <p>Accede a la demo y descubre cómo Órbita puede ayudarte a alcanzar la excelencia operativa.</p>
-                <div class="cta-buttons">
+                    <div class="cta-buttons">
                     <a href="demo.html" class="btn btn-primary">
                         Acceso a Demo
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
                     </a>
-                    <a href="#precios" class="btn btn-secondary">
-                        Ver Precios
+                    <a href="#modulos" class="btn btn-secondary">
+                        Ver Módulos
                     </a>
                 </div>
             </div>
@@ -2223,7 +1646,6 @@
                         <li><a href="#modulos">Módulos</a></li>
                         <li><a href="#beneficios">Beneficios</a></li>
                         <li><a href="#tecnologia">Tecnología</a></li>
-                        <li><a href="#precios">Precios</a></li>
                     </ul>
                 </div>
                 
